@@ -1,0 +1,46 @@
+name: flutter_application_1
+description: "BloodLink - Aplicação de doação de sangue"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Firebase
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.0
+  cloud_firestore: ^5.4.0
+
+  # Mapa OpenStreetMap (gratuito, sem chave)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+
+  # Localização
+  geolocator: ^13.0.2
+
+  # HTTP para APIs
+  http: ^1.2.0
+
+  # Estado
+  provider: ^6.1.2
+
+  # UI
+  intl: ^0.20.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
