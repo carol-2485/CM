@@ -127,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconBg: AppColors.border,
                       title: 'Dúvidas e Consultas',
                       subtitle: 'FAQ e Apoio',
-                      onTap: () {},
+                      onTap: () => Navigator.pushNamed(context, AppRoutes.esclarecer),
                       hasArrow: true,
                     ),
 

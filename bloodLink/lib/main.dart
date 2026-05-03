@@ -11,7 +11,7 @@ import 'screens/home_screen.dart';
 import 'screens/aptidao_screen.dart';
 import 'screens/questionario_screen.dart';
 import 'screens/centros_screen.dart';
-
+import 'screens/esclarecer_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -55,6 +55,7 @@ class BloodLinkApp extends StatelessWidget {
         AppRoutes.aptidao:      (_) => const AptidaoScreen(),
         AppRoutes.questionario: (_) => const QuestionarioScreen(),
         AppRoutes.centros:      (_) => const CentrosScreen(),
+        AppRoutes.esclarecer:   (_) => const EsclarecerScreen(),
       },
     );
   }

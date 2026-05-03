@@ -37,14 +37,7 @@ class AppBottomNav extends StatelessWidget {
               // Gota → Painel do Doador (futuro)
               break;
             case 3:
-              // Apoio ao cliente (futuro)
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Apoio ao cliente — em breve disponível'),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: AppColors.primary,
-                ),
-              );
+              Navigator.pushNamed(context, AppRoutes.esclarecer);
               break;
             case 4:
               // Perfil (futuro)
