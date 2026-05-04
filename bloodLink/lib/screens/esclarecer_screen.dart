@@ -7,7 +7,7 @@ import '../widgets/app_bottom_nav.dart';
 enum TipoAtendimento { videochamada, chatAoVivo, perguntaEscrita }
 
 // Número do profissional de saúde (formato internacional sem '+')
-const String _whatsappNumero = '351900000000'; // ← substitui pelo número real
+const String _whatsappNumero = '351900000000'; // substituir pelo número real
 
 class EsclarecerScreen extends StatefulWidget {
   const EsclarecerScreen({super.key});
@@ -70,7 +70,6 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             // ── Header ───────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -87,30 +86,38 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  // Título bold — centrado
                   const SizedBox(
                     width: double.infinity,
-                    child: Text(
-                      'Esclarecer Dúvidas',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.accent,
-                        fontFamily: 'Poppins',
-                        height: 1.2,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.bloodtype,
+                          size: 28,
+                          color: AppColors.primary,
+                        ),
+                        Text(
+                          'Esclarecer Dúvidas',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.accent,
+                            fontFamily: 'Poppins',
+                            height: 1.2,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 2),
-                  // Subtítulo vermelho — centrado
                   const SizedBox(
                     width: double.infinity,
                     child: Text(
                       'Fale com um profissional de saúde',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 17,
                         color: AppColors.primary,
                         fontWeight: FontWeight.w400,
                       ),
@@ -131,11 +138,7 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
                 alignment: Alignment.bottomCenter,
                 // Placeholder enquanto não tens a imagem:
                 errorBuilder: (_, __, ___) => Center(
-                  child: Icon(
-                    Icons.person,
-                    size: 120,
-                    color: AppColors.border,
-                  ),
+                  child: Icon(Icons.person, size: 120, color: AppColors.border),
                 ),
               ),
             ),
@@ -147,27 +150,30 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     // Pergunta
                     const Text(
                       'Como deseja ser atendido?',
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                         fontFamily: null,
                       ),
                     ),
 
                     const SizedBox(height: 8),
-
-                    // Opções — simples, sem container/borda à volta
                     _buildRadioOption(
-                        TipoAtendimento.videochamada, 'Videochamada'),
+                      TipoAtendimento.videochamada,
+                      'Videochamada',
+                    ),
                     _buildRadioOption(
-                        TipoAtendimento.chatAoVivo, 'Chat ao vivo'),
+                      TipoAtendimento.chatAoVivo,
+                      'Chat ao vivo',
+                    ),
                     _buildRadioOption(
-                        TipoAtendimento.perguntaEscrita, 'Deixar pergunta escrita'),
+                      TipoAtendimento.perguntaEscrita,
+                      'Deixar pergunta escrita',
+                    ),
 
                     const SizedBox(height: 10),
 
@@ -228,7 +234,6 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Círculo exterior sempre visível
             Container(
               width: 20,
               height: 20,
@@ -248,7 +253,7 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: AppColors.textPrimary,
-                fontFamily: null, // fonte do sistema, igual ao Figma
+                fontFamily: null,
               ),
             ),
           ],
