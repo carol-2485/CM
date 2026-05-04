@@ -26,4 +26,8 @@
         </activity>
         <meta-data android:name="flutterEmbedding" android:value="2"/>
     </application>
+
+    <queries>
+        <package android:name="com.whatsapp" />
+    </queries>
 </manifest>
