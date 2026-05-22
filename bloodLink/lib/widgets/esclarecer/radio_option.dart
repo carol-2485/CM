@@ -22,17 +22,25 @@ class _RadioOptionsState extends State<RadioOptions> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      // Aparece como deprecated, mas não consigo fazer de outra forma
-      children: RadioOption.values.map(
-            (option) => RadioListTile<RadioOption>(
-              value: option,
-              groupValue: _selectedOption,
-              title: Text(option.label),
-              onChanged: (newOption) {
-                setState(() => _selectedOption = newOption!);
-              },
-            ),
-          ).toList(),
+      children: [
+        // Agora usa este RadioGroup porque a forma antiga só com RadioListTile não está deprecada
+        RadioGroup<RadioOption>(
+          groupValue: _selectedOption,
+          onChanged: (newOption) {
+            setState(() {
+              _selectedOption = newOption!;
+            });
+          },
+          child: Column(
+            children: RadioOption.values.map((option) {
+              return RadioListTile<RadioOption>(
+                value: option,
+                title: Text(option.label),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 }
