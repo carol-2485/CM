@@ -5,14 +5,39 @@ import 'package:flutter_application_1/widgets/blood_drop.dart';
 import 'package:flutter_application_1/widgets/esclarecer/doctor_card.dart';
 import 'package:flutter_application_1/widgets/esclarecer/radio_option.dart';
 
-class EsclarecerScreen extends StatelessWidget {
+class EsclarecerScreen extends StatefulWidget {
   const EsclarecerScreen({super.key});
+
+  @override
+  State<EsclarecerScreen> createState() => _EsclarecerScreenState();
+}
+
+class _EsclarecerScreenState extends State<EsclarecerScreen> {
+  RadioOption _selectedOption = RadioOption.videocall;
+
+  void _handleOption(RadioOption newOption) {
+    //setState();
+    // tem que se alterar para depois colocar o chat e wpp
+    switch (newOption) {
+      case RadioOption.videocall:
+        // Lógica para iniciar videochamada
+        print("Iniciar Video Chamada");
+        break;
+      case RadioOption.chatAI:
+        // Lógica para abrir chat com IA
+        print("Abrir Chat com IA");
+        break;
+      case RadioOption.message:
+        // Lógica para deixar uma mensagem
+        print("Deixar uma mensagem");
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: HeaderWidget()),
+      appBar: AppBar(centerTitle: true, title: HeaderWidget()),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -24,8 +49,23 @@ class EsclarecerScreen extends StatelessWidget {
               imageUrl:
                   'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=600&auto=format&fit=crop',
             ),
-            const SizedBox(height: 200),
-            RadioOptions(),
+            const SizedBox(height: 100),
+            RadioOptions(
+              selectedOption: _selectedOption,
+              onOptionChanged: (newOption) {
+                setState(() {
+                  _selectedOption = newOption;
+                });
+              },
+            ),
+            const Spacer(), 
+            ElevatedButton(
+              onPressed: () {
+                _handleOption(_selectedOption);
+                print("A fazer uma cena muita fixe");
+              },
+              child: const Text("Iniciar conversa"),
+            ),
           ],
         ),
       ),
@@ -33,6 +73,7 @@ class EsclarecerScreen extends StatelessWidget {
     );
   }
 }
+
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({super.key});

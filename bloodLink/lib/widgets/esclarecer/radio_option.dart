@@ -9,38 +9,33 @@ enum RadioOption {
   const RadioOption(this.label);
 }
 
-class RadioOptions extends StatefulWidget {
-  const RadioOptions({super.key});
+class RadioOptions extends StatelessWidget {
+  final RadioOption selectedOption;
+  final ValueChanged<RadioOption> onOptionChanged;
 
-  @override
-  State<RadioOptions> createState() => _RadioOptionsState();
-}
-
-class _RadioOptionsState extends State<RadioOptions> {
-  RadioOption _selectedOption = RadioOption.videocall;
+  const RadioOptions({
+    super.key,
+    required this.selectedOption,
+    required this.onOptionChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Agora usa este RadioGroup porque a forma antiga só com RadioListTile não está deprecada
         RadioGroup<RadioOption>(
-          groupValue: _selectedOption,
-          onChanged: (newOption) {
-            setState(() {
-              _selectedOption = newOption!;
-            });
-          },
+          groupValue: selectedOption,
+          onChanged: (newValue) => onOptionChanged(newValue!), // Call back para o pai
           child: Column(
-            children: RadioOption.values.map((option) {
-              return RadioListTile<RadioOption>(
+            children: RadioOption.values.map(
+              (option) => RadioListTile<RadioOption>(
                 value: option,
                 title: Text(option.label),
-              );
-            }).toList(),
+              ),
+            ).toList(),
           ),
-        ),
-      ],
+        ), 
+      ], 
     );
   }
 }
