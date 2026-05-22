@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/app_colors.dart';
 
 class DoctorCard extends StatelessWidget {
   final String name;
@@ -15,14 +16,35 @@ class DoctorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: NetworkImage(imageUrl),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize:
+              MainAxisSize.min, 
+          children: [
+            CircleAvatar(
+              radius: 40, 
+              backgroundImage: NetworkImage(imageUrl),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              name,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              specialty,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w300,
+                color: AppColors.textMuted,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
-        title: Text(name),
-        subtitle: Text(specialty),
       ),
     );
   }
-
 }
