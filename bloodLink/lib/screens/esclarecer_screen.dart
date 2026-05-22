@@ -4,6 +4,7 @@ import 'package:flutter_application_1/widgets/app_bottom_nav.dart';
 import 'package:flutter_application_1/widgets/blood_drop.dart';
 import 'package:flutter_application_1/widgets/esclarecer/doctor_card.dart';
 import 'package:flutter_application_1/widgets/esclarecer/radio_option.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EsclarecerScreen extends StatefulWidget {
   const EsclarecerScreen({super.key});
@@ -15,13 +16,15 @@ class EsclarecerScreen extends StatefulWidget {
 class _EsclarecerScreenState extends State<EsclarecerScreen> {
   RadioOption _selectedOption = RadioOption.videocall;
 
-  void _handleOption(RadioOption newOption) {
-    //setState();
-    // tem que se alterar para depois colocar o chat e wpp
+  Future<void> _handleOption(RadioOption newOption) async {
     switch (newOption) {
       case RadioOption.videocall:
         // Lógica para iniciar videochamada
-        print("Iniciar Video Chamada");
+        const number = '351932044469'; 
+        final url = Uri.parse('https://wa.me/${number}?text=Olá, gostaria de esclarecer uma dúvida sobre doação de sangue.');
+        if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
         break;
       case RadioOption.chatAI:
         // Lógica para abrir chat com IA
