@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
+import 'package:flutter_application_1/screens/chat_ia_screen.dart';
 import 'package:flutter_application_1/widgets/app_bottom_nav.dart';
 import 'package:flutter_application_1/widgets/blood_drop.dart';
 import 'package:flutter_application_1/widgets/esclarecer/doctor_card.dart';
@@ -20,15 +21,20 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
     switch (newOption) {
       case RadioOption.videocall:
         // Lógica para iniciar videochamada
-        const number = '351932044469'; 
-        final url = Uri.parse('https://wa.me/${number}?text=Olá, gostaria de esclarecer uma dúvida sobre doação de sangue.');
+        const number = '351932044469';
+        final url = Uri.parse(
+          'https://wa.me/${number}?text=Olá, gostaria de esclarecer uma dúvida sobre doação de sangue.',
+        );
         if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      }
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        }
         break;
       case RadioOption.chatAI:
         // Lógica para abrir chat com IA
-        print("Abrir Chat com IA");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ChatIAScreen()),
+        );
         break;
       case RadioOption.message:
         // Lógica para deixar uma mensagem
@@ -61,7 +67,7 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
                 });
               },
             ),
-            const Spacer(), 
+            const Spacer(),
             ElevatedButton(
               onPressed: () {
                 _handleOption(_selectedOption);
@@ -76,7 +82,6 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
     );
   }
 }
-
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({super.key});
