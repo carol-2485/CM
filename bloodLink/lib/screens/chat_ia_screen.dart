@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import '../constants/app_colors.dart';
 
 class ChatIAScreen extends StatefulWidget {
   const ChatIAScreen({super.key});
@@ -75,12 +76,12 @@ class _ChatIAScreenState extends State<ChatIAScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
                     decoration: BoxDecoration(
-                      color: msg.isUser ? Colors.blue : Colors.grey[200],
+                      color: msg.isUser ? AppColors.primary : AppColors.secondary,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       msg.text,
-                      style: TextStyle(color: msg.isUser ? Colors.white : Colors.black),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 );
@@ -88,7 +89,7 @@ class _ChatIAScreenState extends State<ChatIAScreen> {
             ),
           ),
           if (_isLoading)
-            const LinearProgressIndicator(),
+            const CircularProgressIndicator(),
           Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
@@ -108,7 +109,7 @@ class _ChatIAScreenState extends State<ChatIAScreen> {
                 IconButton(
                   onPressed: _isLoading ? null : _sendMessage,
                   icon: const Icon(Icons.send),
-                  color: Colors.blue,
+                  color: AppColors.primary,
                 ),
               ],
             ),
