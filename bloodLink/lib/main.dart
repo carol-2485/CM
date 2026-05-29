@@ -13,20 +13,21 @@ import 'screens/aptidao_screen.dart';
 import 'screens/questionario_screen.dart';
 import 'screens/centros_screen.dart';
 import 'screens/esclarecer_screen.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load(fileName: ".env");
 
   await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyDG-TzIHsqqFn0YgzdLKK3Y5y6luKLTJtM",
-      authDomain: "bloodlink-v2-6b758.firebaseapp.com",
-      projectId: "bloodlink-v2-6b758",
-      storageBucket: "bloodlink-v2-6b758.firebasestorage.app",
-      messagingSenderId: "81135854685",
-      appId: "1:81135854685:web:3a353aa9b6a627ae0619b4",
-      measurementId: "G-X5MSRRD6ZS",
+    options: FirebaseOptions(
+      apiKey: dotenv.env['FIREBASE_API_KEY']!,
+      authDomain: dotenv.env['FIREBASE_AUTH_DOMAIN']!,
+      projectId: dotenv.env['FIREBASE_PROJECT_ID']!,
+      storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET']!,
+      messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID']!,
+      appId: dotenv.env['FIREBASE_APP_ID']!,
+      measurementId: dotenv.env['FIREBASE_MEASUREMENT_ID']!,
     ),
   );
 
@@ -52,13 +53,13 @@ class BloodLinkApp extends StatelessWidget {
       locale: const Locale('pt', 'PT'),
       initialRoute: AppRoutes.login,
       routes: {
-        AppRoutes.login:        (_) => const LoginScreen(),
-        AppRoutes.register:     (_) => const RegisterScreen(),
-        AppRoutes.home:         (_) => const HomeScreen(),
-        AppRoutes.aptidao:      (_) => const AptidaoScreen(),
+        AppRoutes.login: (_) => const LoginScreen(),
+        AppRoutes.register: (_) => const RegisterScreen(),
+        AppRoutes.home: (_) => const HomeScreen(),
+        AppRoutes.aptidao: (_) => const AptidaoScreen(),
         AppRoutes.questionario: (_) => const QuestionarioScreen(),
-        AppRoutes.centros:      (_) => const CentrosScreen(),
-        AppRoutes.esclarecer:   (_) => const EsclarecerScreen(),
+        AppRoutes.centros: (_) => const CentrosScreen(),
+        AppRoutes.esclarecer: (_) => const EsclarecerScreen(),
       },
     );
   }
