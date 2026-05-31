@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../../constants/app_routes.dart';
 
 class AppBottomNavCentro extends StatelessWidget {
   final int currentIndex;
@@ -21,7 +22,22 @@ class AppBottomNavCentro extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
       ],
       onTap: (index) {
-        // navegação consoante o index
+        if (index == currentIndex) return; // já está nessa página
+
+        switch (index) {
+          case 0:
+            Navigator.pushReplacementNamed(context, AppRoutesCentro.home);
+            break;
+          case 1:
+            //Navigator.pushReplacementNamed(context, AppRoutesCentro.gerirSlots);
+            break;
+          case 2:
+            //Navigator.pushReplacementNamed(context, AppRoutesCentro.pedidos);
+            break;
+          case 3:
+            Navigator.pushReplacementNamed(context, AppRoutesCentro.perfil);
+            break;
+        }
       },
     );
   }

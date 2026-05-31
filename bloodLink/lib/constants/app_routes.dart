@@ -13,4 +13,5 @@ class AppRoutesUser {
 class AppRoutesCentro {
   static const String login = '/centro/login';
   static const String home = '/centro/home';
+  static const String perfil = '/centro/perfil';
 }

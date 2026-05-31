@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_application_1/screens/centro/centro_home_screen.dart';
+import 'package:flutter_application_1/screens/centro/centro_perfil_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -62,6 +63,7 @@ class BloodLinkApp extends StatelessWidget {
         AppRoutesUser.centros: (_) => const CentrosScreen(),
         AppRoutesUser.esclarecer: (_) => const EsclarecerScreen(),
         AppRoutesCentro.home: (context) => const CentroHomeScreen(),
+        AppRoutesCentro.perfil: (context) => const CentroPerfilScreen(),
       },
     );
   }
