@@ -37,16 +37,14 @@ class _LoginScreenState extends State<LoginScreen> {
       final credential = await _auth.login(_emailCtrl.text, _passCtrl.text);
       if (!mounted) return;
 
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
+      final centroDoc = await FirebaseFirestore.instance
+          .collection('centros')
           .doc(credential.user!.uid)
           .get();
 
-      final role = doc.data()?['role'] ?? 'user';
-
       if (!mounted) return;
 
-      if (role == 'centro') {
+      if (centroDoc.exists) {
         Navigator.pushReplacementNamed(context, AppRoutesCentro.home);
       } else {
         Navigator.pushReplacementNamed(context, AppRoutesUser.home);
@@ -347,8 +345,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: GestureDetector(
-                        onTap: () =>
-                            Navigator.pushNamed(context, AppRoutesUser.register),
+                        onTap: () => Navigator.pushNamed(
+                          context,
+                          AppRoutesUser.register,
+                        ),
                         child: const Text(
                           'Registe-se',
                           style: TextStyle(
