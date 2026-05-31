@@ -27,17 +27,17 @@ class AppBottomNav extends StatelessWidget {
           if (i == currentIndex) return;
           switch (i) {
             case 0:
-              Navigator.pushReplacementNamed(context, AppRoutes.home);
+              Navigator.pushReplacementNamed(context, AppRoutesUser.home);
               break;
             case 1:
               // Calendário → Centros de Doação
-              Navigator.pushNamed(context, AppRoutes.centros);
+              Navigator.pushNamed(context, AppRoutesUser.centros);
               break;
             case 2:
               // Gota → Painel do Doador (futuro)
               break;
             case 3:
-              Navigator.pushNamed(context, AppRoutes.esclarecer);
+              Navigator.pushNamed(context, AppRoutesUser.esclarecer);
               break;
             case 4:
               // Perfil (futuro)

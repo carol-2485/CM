@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import '../constants/app_colors.dart';
-import '../widgets/app_bottom_nav.dart';
-import '../widgets/blood_drop.dart';
+import '../../constants/app_colors.dart';
+import '../../widgets/app_bottom_nav.dart';
+import '../../widgets/blood_drop.dart';
 
 // Modelo simples de centro de doação
 class _Centro {

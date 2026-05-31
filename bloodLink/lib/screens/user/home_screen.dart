@@ -1,9 +1,9 @@
 // lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
-import '../constants/app_routes.dart';
-import '../services/auth_service.dart';
-import '../widgets/app_bottom_nav.dart';
+import '../../constants/app_colors.dart';
+import '../../constants/app_routes.dart';
+import '../../services/auth_service.dart';
+import '../../widgets/app_bottom_nav.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _logout() async {
     await _auth.logout();
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, AppRoutes.login);
+    Navigator.pushReplacementNamed(context, AppRoutesUser.login);
   }
 
   @override
@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconBg: AppColors.primary,
                       title: 'Doar Sangue',
                       subtitle: 'Agendar próxima doação',
-                      onTap: () => Navigator.pushNamed(context, AppRoutes.centros),
+                      onTap: () => Navigator.pushNamed(context, AppRoutesUser.centros),
                       hasArrow: true,
                     ),
                     _buildActionTile(
@@ -127,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconBg: AppColors.border,
                       title: 'Dúvidas e Consultas',
                       subtitle: 'FAQ e Apoio',
-                      onTap: () => Navigator.pushNamed(context, AppRoutes.esclarecer),
+                      onTap: () => Navigator.pushNamed(context, AppRoutesUser.esclarecer),
                       hasArrow: true,
                     ),
 
@@ -189,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, AppRoutes.aptidao),
+      onTap: () => Navigator.pushNamed(context, AppRoutesUser.aptidao),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(

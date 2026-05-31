@@ -1,10 +1,11 @@
 // lib/screens/login_screen.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../constants/app_colors.dart';
-import '../constants/app_routes.dart';
-import '../services/auth_service.dart';
-import '../widgets/blood_drop.dart';
+import '../../constants/app_colors.dart';
+import '../../constants/app_routes.dart';
+import '../../services/auth_service.dart';
+import '../../widgets/blood_drop.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,17 +32,34 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
+
     try {
-      await _auth.login(_emailCtrl.text, _passCtrl.text);
+      final credential = await _auth.login(_emailCtrl.text, _passCtrl.text);
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
+
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(credential.user!.uid)
+          .get();
+
+      final role = doc.data()?['role'] ?? 'user';
+
+      if (!mounted) return;
+
+      if (role == 'centro') {
+        Navigator.pushReplacementNamed(context, AppRoutesCentro.home);
+      } else {
+        Navigator.pushReplacementNamed(context, AppRoutesUser.home);
+      }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(_auth.getErrorMessage(e)),
-        backgroundColor: AppColors.error,
-        behavior: SnackBarBehavior.floating,
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_auth.getErrorMessage(e)),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -67,29 +85,48 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Center(
                 child: Container(
-                  width: 40, height: 4,
-                  decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(2)),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
-              const Text('Recuperar palavra-passe',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.accent)),
+              const Text(
+                'Recuperar palavra-passe',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.accent,
+                ),
+              ),
               const SizedBox(height: 8),
-              const Text('Introduza o seu email para receber um link de recuperação.',
-                  style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
+              const Text(
+                'Introduza o seu email para receber um link de recuperação.',
+                style: TextStyle(fontSize: 13, color: AppColors.textMuted),
+              ),
               const SizedBox(height: 20),
               TextFormField(
                 controller: emailCtrl,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   hintText: 'Email',
-                  prefixIcon: const Icon(Icons.email_outlined, color: AppColors.textMuted),
+                  prefixIcon: const Icon(
+                    Icons.email_outlined,
+                    color: AppColors.textMuted,
+                  ),
                   filled: true,
                   fillColor: AppColors.inputBg,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.border)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppColors.border)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
@@ -101,17 +138,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pop(ctx);
                     await _auth.sendPasswordReset(emailCtrl.text);
                     if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Email de recuperação enviado!'),
-                      backgroundColor: AppColors.success,
-                      behavior: SnackBarBehavior.floating,
-                    ));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Email de recuperação enviado!'),
+                        backgroundColor: AppColors.success,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Enviar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                  child: const Text(
+                    'Enviar',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -138,7 +185,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Text(
                   'Doe sangue,\nsalve vidas',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: AppColors.accent, height: 1.2),
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.accent,
+                    height: 1.2,
+                  ),
                 ),
                 const SizedBox(height: 36),
 
@@ -148,15 +200,30 @@ class _LoginScreenState extends State<LoginScreen> {
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintText: 'Nome de utilizador',
-                    prefixIcon: const Icon(Icons.person_outline, color: AppColors.textMuted),
+                    prefixIcon: const Icon(
+                      Icons.person_outline,
+                      color: AppColors.textMuted,
+                    ),
                     filled: true,
                     fillColor: AppColors.surface,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 1.5,
+                      ),
+                    ),
                   ),
-                  validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
+                  validator: (v) =>
+                      v == null || v.isEmpty ? 'Campo obrigatório' : null,
                 ),
                 const SizedBox(height: 12),
 
@@ -166,27 +233,49 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: _obscure,
                   decoration: InputDecoration(
                     hintText: 'Palavra-passe',
-                    prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textMuted),
+                    prefixIcon: const Icon(
+                      Icons.lock_outline,
+                      color: AppColors.textMuted,
+                    ),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                          color: AppColors.textMuted),
+                      icon: Icon(
+                        _obscure
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: AppColors.textMuted,
+                      ),
                       onPressed: () => setState(() => _obscure = !_obscure),
                     ),
                     filled: true,
                     fillColor: AppColors.surface,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30),
-                        borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 1.5,
+                      ),
+                    ),
                   ),
-                  validator: (v) => v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
+                  validator: (v) =>
+                      v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
                 ),
                 const SizedBox(height: 8),
 
                 // Lembrar-me
                 Row(
                   children: [
-                    Checkbox(value: _lembrar, onChanged: (v) => setState(() => _lembrar = v ?? false)),
+                    Checkbox(
+                      value: _lembrar,
+                      onChanged: (v) => setState(() => _lembrar = v ?? false),
+                    ),
                     const Text('Lembrar-me', style: TextStyle(fontSize: 13)),
                     const Spacer(),
                     // "Esqueceu-se" com efeito hover
@@ -218,13 +307,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: _loading ? null : _login,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                     ),
                     child: _loading
-                        ? const SizedBox(width: 22, height: 22,
-                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
-                        : const Text('Entrar',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.5,
+                            ),
+                          )
+                        : const Text(
+                            'Entrar',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
 
@@ -234,12 +337,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Ainda não tem conta? ',
-                        style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
+                    const Text(
+                      'Ainda não tem conta? ',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
                     MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: GestureDetector(
-                        onTap: () => Navigator.pushNamed(context, AppRoutes.register),
+                        onTap: () =>
+                            Navigator.pushNamed(context, AppRoutesUser.register),
                         child: const Text(
                           'Registe-se',
                           style: TextStyle(

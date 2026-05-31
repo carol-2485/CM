@@ -1,18 +1,19 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_application_1/screens/centro/centro_home_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'constants/app_routes.dart';
 import 'constants/app_theme.dart';
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/aptidao_screen.dart';
-import 'screens/questionario_screen.dart';
-import 'screens/centros_screen.dart';
-import 'screens/esclarecer_screen.dart';
+import 'screens/user/login_screen.dart';
+import 'screens/user/register_screen.dart';
+import 'screens/user/home_screen.dart';
+import 'screens/user/aptidao_screen.dart';
+import 'screens/user/questionario_screen.dart';
+import 'screens/user/centros_screen.dart';
+import 'screens/user/esclarecer_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,15 +52,16 @@ class BloodLinkApp extends StatelessWidget {
       ],
       supportedLocales: const [Locale('pt', 'PT'), Locale('en', 'US')],
       locale: const Locale('pt', 'PT'),
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutesUser.login,
       routes: {
-        AppRoutes.login: (_) => const LoginScreen(),
-        AppRoutes.register: (_) => const RegisterScreen(),
-        AppRoutes.home: (_) => const HomeScreen(),
-        AppRoutes.aptidao: (_) => const AptidaoScreen(),
-        AppRoutes.questionario: (_) => const QuestionarioScreen(),
-        AppRoutes.centros: (_) => const CentrosScreen(),
-        AppRoutes.esclarecer: (_) => const EsclarecerScreen(),
+        AppRoutesUser.login: (_) => const LoginScreen(),
+        AppRoutesUser.register: (_) => const RegisterScreen(),
+        AppRoutesUser.home: (_) => const HomeScreen(),
+        AppRoutesUser.aptidao: (_) => const AptidaoScreen(),
+        AppRoutesUser.questionario: (_) => const QuestionarioScreen(),
+        AppRoutesUser.centros: (_) => const CentrosScreen(),
+        AppRoutesUser.esclarecer: (_) => const EsclarecerScreen(),
+        AppRoutesCentro.home: (context) => const CentroHomeScreen(),
       },
     );
   }

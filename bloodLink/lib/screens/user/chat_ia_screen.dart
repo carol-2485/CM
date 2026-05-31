@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import '../constants/app_colors.dart';
+import '../../constants/app_colors.dart';
 
 class ChatIAScreen extends StatefulWidget {
   const ChatIAScreen({super.key});

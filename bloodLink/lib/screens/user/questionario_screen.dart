@@ -1,12 +1,12 @@
 // lib/screens/questionario_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../constants/app_colors.dart';
-import '../constants/app_routes.dart';
-import '../services/auth_service.dart';
-import '../services/openfda_service.dart';
-import '../widgets/app_bottom_nav.dart';
-import '../widgets/blood_drop.dart';
+import '../../constants/app_colors.dart';
+import '../../constants/app_routes.dart';
+import '../../services/auth_service.dart';
+import '../../services/openfda_service.dart';
+import '../../widgets/app_bottom_nav.dart';
+import '../../widgets/blood_drop.dart';
 
 class QuestionarioScreen extends StatefulWidget {
   const QuestionarioScreen({super.key});
@@ -175,7 +175,7 @@ class _QuestionarioScreenState extends State<QuestionarioScreen> {
             child: TextButton(
               onPressed: () {
                 Navigator.pop(ctx);
-                Navigator.pushReplacementNamed(context, AppRoutes.home);
+                Navigator.pushReplacementNamed(context, AppRoutesUser.home);
               },
               child: Text(
                 apto ? 'Ver centros de doação' : 'Voltar ao início',

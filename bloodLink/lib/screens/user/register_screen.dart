@@ -1,9 +1,9 @@
 // lib/screens/register_screen.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../constants/app_colors.dart';
-import '../constants/app_routes.dart';
-import '../services/auth_service.dart';
+import '../../constants/app_colors.dart';
+import '../../constants/app_routes.dart';
+import '../../services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -46,7 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         dataUltimaDoacao: _dataCtrl.text,
       );
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
+      Navigator.pushReplacementNamed(context, AppRoutesUser.home);
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
