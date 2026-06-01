@@ -1,20 +1,20 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_application_1/screens/centro/centro_home_screen.dart';
-import 'package:flutter_application_1/screens/centro/centro_perfil_screen.dart';
+import 'package:flutter_application_1/features/centro/centro_home_screen.dart';
+import 'package:flutter_application_1/features/centro/centro_perfil_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'constants/app_routes.dart';
 import 'constants/app_theme.dart';
-import 'screens/user/login_screen.dart';
-import 'screens/user/register_screen.dart';
-import 'screens/user/home_screen.dart';
-import 'screens/user/aptidao_screen.dart';
-import 'screens/user/questionario_screen.dart';
-import 'screens/user/centros_screen.dart';
-import 'screens/user/esclarecer_screen.dart';
+import 'features/login_screen.dart';
+import 'features/register_screen.dart';
+import 'features/home_screen.dart';
+import 'features/aptidao_screen.dart';
+import 'features/questionario_screen.dart';
+import 'features/centros_screen.dart';
+import 'features/esclarecer_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

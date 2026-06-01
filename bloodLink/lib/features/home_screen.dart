@@ -1,9 +1,9 @@
 // lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
-import '../../constants/app_colors.dart';
-import '../../constants/app_routes.dart';
-import '../../services/auth_service.dart';
-import '../../widgets/app_bottom_nav.dart';
+import '../constants/app_colors.dart';
+import '../constants/app_routes.dart';
+import '../services/auth_service.dart';
+import '../widgets/app_bottom_nav.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

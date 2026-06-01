@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screens/centro/app_bottom_nav_centro.dart';
+import 'package:flutter_application_1/features/centro/app_bottom_nav_centro.dart';
 import '../../constants/app_colors.dart';
 
 
@@ -144,6 +144,8 @@ class CentroHomeScreen extends StatelessWidget {
     );
   }
 
+
+  // Colocar como widget na pasta widgets
   Widget _buildOptionCard({
     required IconData icon,
     required String title,
