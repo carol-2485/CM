@@ -98,7 +98,7 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
                     const SizedBox(height: 20),
                     ProfileHeader(
                       nome: nome,
-                      subtitle: 'Bom dia! Aqui está o seu resumo.',
+                      subtitle: 'Aqui está o seu resumo.',
                       avatarIcon: Icons.local_hospital,
                       onLogout: _logout,
                     ),
