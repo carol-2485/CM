@@ -8,10 +8,12 @@ class AppRoutesUser {
   static const String questionario = '/questionario';
   static const String centros = '/centros';
   static const String esclarecer = '/esclarecer';
+  static const String myMessages = '/my-messages';
 }
 
 class AppRoutesCentro {
   static const String login = '/centro/login';
   static const String home = '/centro/home';
   static const String perfil = '/centro/perfil';
+  static const String messages = '/centro/messages';
 }

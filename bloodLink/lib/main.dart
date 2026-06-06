@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_application_1/features/centro/centro_home_screen.dart';
 import 'package:flutter_application_1/features/centro/centro_perfil_screen.dart';
+import 'package:flutter_application_1/features/centro/messages_screen.dart';
+import 'package:flutter_application_1/features/leave_message/messages_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -21,17 +23,22 @@ void main() async {
 
   await dotenv.load(fileName: ".env");
 
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: dotenv.env['FIREBASE_API_KEY']!,
-      authDomain: dotenv.env['FIREBASE_AUTH_DOMAIN']!,
-      projectId: dotenv.env['FIREBASE_PROJECT_ID']!,
-      storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET']!,
-      messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID']!,
-      appId: dotenv.env['FIREBASE_APP_ID']!,
-      measurementId: dotenv.env['FIREBASE_MEASUREMENT_ID']!,
-    ),
-  );
+  try {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: dotenv.env['FIREBASE_API_KEY']!,
+        authDomain: dotenv.env['FIREBASE_AUTH_DOMAIN']!,
+        projectId: dotenv.env['FIREBASE_PROJECT_ID']!,
+        storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET']!,
+        messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID']!,
+        appId: dotenv.env['FIREBASE_APP_ID']!,
+        measurementId: dotenv.env['FIREBASE_MEASUREMENT_ID']!,
+      ),
+    );
+  } catch (e) {
+    // Firebase já inicializado nativamente pelo Android
+    print('Firebase já inicializado: $e');
+  }
 
   await initializeDateFormatting('pt_PT', null);
   runApp(const BloodLinkApp());
@@ -62,8 +69,10 @@ class BloodLinkApp extends StatelessWidget {
         AppRoutesUser.questionario: (_) => const QuestionarioScreen(),
         AppRoutesUser.centros: (_) => const CentrosScreen(),
         AppRoutesUser.esclarecer: (_) => const EsclarecerScreen(),
+        AppRoutesUser.myMessages: (_) => const MyMessagesScreen(),
         AppRoutesCentro.home: (context) => const CentroHomeScreen(),
         AppRoutesCentro.perfil: (context) => const CentroPerfilScreen(),
+        AppRoutesCentro.messages: (_) => const CentroMessagesScreen(),
       },
     );
   }

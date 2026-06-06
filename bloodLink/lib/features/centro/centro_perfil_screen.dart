@@ -69,7 +69,7 @@ class CentroPerfilScreen extends StatelessWidget {
           },
         ),
       ),
-      bottomNavigationBar: const AppBottomNavCentro(currentIndex: 3),
+      bottomNavigationBar: const AppBottomNavCentro(currentIndex: 4),
     );
   }
 

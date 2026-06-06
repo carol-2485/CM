@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/features/centro/messages_screen.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_routes.dart';
 import '../auth/services/auth_service.dart';
@@ -136,6 +137,17 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
                       title: 'Histórico',
                       subtitle: 'Consultas anteriores',
                       onTap: () {},
+                    ),
+                    ActionTile(
+                      icon: Icons.mail_outline,
+                      title: 'Mensagens',
+                      subtitle: 'Ver e responder mensagens',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CentroMessagesScreen(),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 20),
                   ],

@@ -19,6 +19,7 @@ class AppBottomNavCentro extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Vagas'),
         BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Pedidos'),
+        BottomNavigationBarItem(icon: Icon(Icons.mail_outline), label: 'Mensagens'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
       ],
       onTap: (index) {
@@ -35,6 +36,9 @@ class AppBottomNavCentro extends StatelessWidget {
             //Navigator.pushReplacementNamed(context, AppRoutesCentro.pedidos);
             break;
           case 3:
+            Navigator.pushReplacementNamed(context, AppRoutesCentro.messages);
+            break;
+          case 4:
             Navigator.pushReplacementNamed(context, AppRoutesCentro.perfil);
             break;
         }

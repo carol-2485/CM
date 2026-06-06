@@ -6,6 +6,7 @@ import 'package:flutter_application_1/features/common/widgets/blood_drop.dart';
 import 'package:flutter_application_1/features/clarify/widgets/doctor_card.dart';
 import 'package:flutter_application_1/features/clarify/widgets/radio_option.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../leave_message/leave_message_screen.dart';
 
 class EsclarecerScreen extends StatefulWidget {
   const EsclarecerScreen({super.key});
@@ -37,8 +38,10 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
         );
         break;
       case RadioOption.message:
-        // Lógica para deixar uma mensagem
-        print("Deixar uma mensagem");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LeaveMessageScreen()),
+        );
         break;
     }
   }
