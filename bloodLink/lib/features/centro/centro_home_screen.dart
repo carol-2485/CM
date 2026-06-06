@@ -1,204 +1,111 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/features/centro/widgets/app_bottom_nav_centro.dart';
 import '../../constants/app_colors.dart';
+import '../../constants/app_routes.dart';
+import '../auth/services/auth_service.dart';
+import '../common/widgets/profile_header.dart';
+import 'widgets/app_bottom_nav_centro.dart';
 
-
-class CentroHomeScreen extends StatelessWidget {
+class CentroHomeScreen extends StatefulWidget {
   const CentroHomeScreen({super.key});
 
   @override
+  State<CentroHomeScreen> createState() => _CentroHomeScreenState();
+}
+
+class _CentroHomeScreenState extends State<CentroHomeScreen> {
+  final _auth = AuthService();
+  Map<String, dynamic>? _centroData;
+  int _consultasHoje = 0;
+  int _pedidosPendentes = 0;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+
+    // dados do centro
+    final centroDoc = await FirebaseFirestore.instance
+        .collection('centros')
+        .doc(uid)
+        .get();
+
+    // vagas deste centro (subcoleção)
+    final hoje = DateTime.now();
+    final inicioDia = DateTime(hoje.year, hoje.month, hoje.day);
+    final fimDia = inicioDia.add(const Duration(days: 1));
+
+    // consultas de hoje
+    /* final consultas = await FirebaseFirestore.instance
+        .collection('centros')
+        .doc(uid)
+        .collection('vagas')
+        .where('data', isGreaterThanOrEqualTo: inicioDia)
+        .where('data', isLessThan: fimDia)
+        .where('estado', isEqualTo: 'aceite')
+        .count()
+        .get(); */
+
+    // pedidos pendentes
+    /* final pedidos = await FirebaseFirestore.instance
+        .collection('centros')
+        .doc(uid)
+        .collection('vagas')
+        .where('estado', isEqualTo: 'confirmado')
+        .count()
+        .get(); */
+
+    if (mounted) {
+      setState(() {
+        _centroData = centroDoc.data();
+        _consultasHoje = /* consultas.count ?? */ 0;
+        _pedidosPendentes = /* pedidos.count ?? */ 0;
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _logout() async {
+    await _auth.logout();
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, AppRoutesUser.login);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final nome = _centroData?['nome'] as String? ?? '';
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              _buildHeader(),
-              const SizedBox(height: 24),
-              _buildConsultasHojeCard(),
-              const SizedBox(height: 24),
-              const Text(
-                'O QUE QUER FAZER?',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textMuted,
-                  letterSpacing: 1,
+      body: _loading
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
+          : SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    ProfileHeader(
+                      nome: nome,
+                      subtitle: 'Aqui está o seu resumo.',
+                      avatarIcon: Icons.local_hospital,
+                      onLogout: _logout,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              _buildOptionCard(
-                icon: Icons.event_available,
-                title: 'Gerir Vagas',
-                subtitle: 'Criar e editar slots disponíveis',
-                onTap: () {},
-              ),
-              _buildOptionCard(
-                icon: Icons.pending_actions,
-                title: 'Pedidos Pendentes',
-                subtitle: '3 pedidos a aguardar resposta',
-                badge: '3',
-                onTap: () {},
-              ),
-              _buildOptionCard(
-                icon: Icons.check_circle_outline,
-                title: 'Consultas Confirmadas',
-                subtitle: 'Ver próximas consultas',
-                onTap: () {},
-              ),
-              _buildOptionCard(
-                icon: Icons.history,
-                title: 'Histórico',
-                subtitle: 'Consultas anteriores',
-                onTap: () {},
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
+            ),
       bottomNavigationBar: const AppBottomNavCentro(currentIndex: 0),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        const CircleAvatar(
-          radius: 28,
-          backgroundColor: AppColors.surface,
-          child: Icon(Icons.local_hospital, color: AppColors.primary, size: 30),
-        ),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            RichText(
-              text: const TextSpan(
-                style: TextStyle(
-                  fontSize: 18,
-                  color: AppColors.accent,
-                  fontWeight: FontWeight.w700,
-                ),
-                children: [
-                  TextSpan(text: 'Olá, '),
-                  TextSpan(
-                    text: 'Centro de Setúbal!',
-                    style: TextStyle(color: AppColors.primary),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 2),
-            const Text(
-              'Bom dia! Aqui está o seu resumo.',
-              style: TextStyle(fontSize: 12, color: AppColors.textMuted),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildConsultasHojeCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.today, color: Colors.white, size: 24),
-              const SizedBox(width: 8),
-              const Text(
-                'Consultas de Hoje',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            '5 consultas agendadas para hoje',
-            style: TextStyle(color: Colors.white70, fontSize: 13),
-          ),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Icon(Icons.arrow_forward, color: Colors.white.withOpacity(0.9)),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-  // Colocar como widget na pasta widgets
-  Widget _buildOptionCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    String? badge,
-    required VoidCallback onTap,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: AppColors.primary),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColors.accent,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-        ),
-        trailing: badge != null
-            ? Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  badge,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              )
-            : const Icon(Icons.chevron_right, color: AppColors.textMuted),
-        onTap: onTap,
-      ),
     );
   }
 }
