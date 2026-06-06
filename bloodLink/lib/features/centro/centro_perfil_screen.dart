@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/features/centro/app_bottom_nav_centro.dart';
+import 'package:flutter_application_1/features/centro/widgets/app_bottom_nav_centro.dart';
 import '../../constants/app_colors.dart';
 
 

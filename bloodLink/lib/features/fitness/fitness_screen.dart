@@ -1,8 +1,8 @@
 // lib/screens/aptidao_screen.dart
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
-import '../constants/app_routes.dart';
-import '../widgets/app_bottom_nav.dart';
+import '../../constants/app_colors.dart';
+import '../../constants/app_routes.dart';
+import '../common/widgets/app_bottom_nav.dart';
 
 class AptidaoScreen extends StatelessWidget {
   const AptidaoScreen({super.key});

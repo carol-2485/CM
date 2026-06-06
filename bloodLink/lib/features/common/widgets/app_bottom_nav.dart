@@ -1,7 +1,7 @@
 // lib/widgets/app_bottom_nav.dart
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
-import '../constants/app_routes.dart';
+import '../../../constants/app_colors.dart';
+import '../../../constants/app_routes.dart';
 
 class AppBottomNav extends StatelessWidget {
   final int currentIndex;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
 import 'package:flutter_application_1/features/chat/chat_ia_screen.dart';
-import 'package:flutter_application_1/widgets/app_bottom_nav.dart';
-import 'package:flutter_application_1/widgets/blood_drop.dart';
-import 'package:flutter_application_1/widgets/esclarecer/doctor_card.dart';
-import 'package:flutter_application_1/widgets/esclarecer/radio_option.dart';
+import 'package:flutter_application_1/features/common/widgets/app_bottom_nav.dart';
+import 'package:flutter_application_1/features/common/widgets/blood_drop.dart';
+import 'package:flutter_application_1/features/clarify/widgets/doctor_card.dart';
+import 'package:flutter_application_1/features/clarify/widgets/radio_option.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EsclarecerScreen extends StatefulWidget {

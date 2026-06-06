@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../constants/app_colors.dart';
-import '../../constants/app_routes.dart';
+import '../../../constants/app_colors.dart';
+import '../../../constants/app_routes.dart';
 
 class AppBottomNavCentro extends StatelessWidget {
   final int currentIndex;
