@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_routes.dart';
 import '../auth/services/auth_service.dart';
+import '../common/widgets/action_tile.dart';
+import '../common/widgets/highlight_card.dart';
 import '../common/widgets/profile_header.dart';
+import '../common/widgets/section_label.dart';
 import 'widgets/app_bottom_nav_centro.dart';
 
 class CentroHomeScreen extends StatefulWidget {
@@ -36,12 +39,11 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
         .doc(uid)
         .get();
 
-    // vagas deste centro (subcoleção)
+    // contar consultas de hoje
     final hoje = DateTime.now();
     final inicioDia = DateTime(hoje.year, hoje.month, hoje.day);
     final fimDia = inicioDia.add(const Duration(days: 1));
 
-    // consultas de hoje
     /* final consultas = await FirebaseFirestore.instance
         .collection('centros')
         .doc(uid)
@@ -50,10 +52,10 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
         .where('data', isLessThan: fimDia)
         .where('estado', isEqualTo: 'aceite')
         .count()
-        .get(); */
+        .get();
 
-    // pedidos pendentes
-    /* final pedidos = await FirebaseFirestore.instance
+    // contar pedidos pendentes
+    final pedidos = await FirebaseFirestore.instance
         .collection('centros')
         .doc(uid)
         .collection('vagas')
@@ -96,11 +98,46 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
                     const SizedBox(height: 20),
                     ProfileHeader(
                       nome: nome,
-                      subtitle: 'Aqui está o seu resumo.',
+                      subtitle: 'Bom dia! Aqui está o seu resumo.',
                       avatarIcon: Icons.local_hospital,
                       onLogout: _logout,
                     ),
                     const SizedBox(height: 24),
+                    HighlightCard(
+                      icon: Icons.today,
+                      title: 'Consultas de Hoje',
+                      subtitle: '$_consultasHoje consultas agendadas',
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 24),
+                    const SectionLabel('O QUE QUER FAZER?'),
+                    const SizedBox(height: 12),
+                    ActionTile(
+                      icon: Icons.event_available,
+                      iconBg: AppColors.primary,
+                      title: 'Gerir Vagas',
+                      subtitle: 'Criar e editar slots disponíveis',
+                      onTap: () {},
+                    ),
+                    ActionTile(
+                      icon: Icons.pending_actions,
+                      title: 'Pedidos Pendentes',
+                      subtitle: '$_pedidosPendentes a aguardar resposta',
+                      onTap: () {},
+                    ),
+                    ActionTile(
+                      icon: Icons.check_circle_outline,
+                      title: 'Consultas Confirmadas',
+                      subtitle: 'Ver próximas consultas',
+                      onTap: () {},
+                    ),
+                    ActionTile(
+                      icon: Icons.history,
+                      title: 'Histórico',
+                      subtitle: 'Consultas anteriores',
+                      onTap: () {},
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
