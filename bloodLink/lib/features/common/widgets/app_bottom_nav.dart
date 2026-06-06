@@ -1,7 +1,7 @@
 // lib/widgets/app_bottom_nav.dart
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
-import '../constants/app_routes.dart';
+import '../../../constants/app_colors.dart';
+import '../../../constants/app_routes.dart';
 
 class AppBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -27,24 +27,17 @@ class AppBottomNav extends StatelessWidget {
           if (i == currentIndex) return;
           switch (i) {
             case 0:
-              Navigator.pushReplacementNamed(context, AppRoutes.home);
+              Navigator.pushReplacementNamed(context, AppRoutesUser.home);
               break;
             case 1:
               // Calendário → Centros de Doação
-              Navigator.pushNamed(context, AppRoutes.centros);
+              Navigator.pushNamed(context, AppRoutesUser.centros);
               break;
             case 2:
               // Gota → Painel do Doador (futuro)
               break;
             case 3:
-              // Apoio ao cliente (futuro)
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Apoio ao cliente — em breve disponível'),
-                  behavior: SnackBarBehavior.floating,
-                  backgroundColor: AppColors.primary,
-                ),
-              );
+              Navigator.pushNamed(context, AppRoutesUser.esclarecer);
               break;
             case 4:
               // Perfil (futuro)
