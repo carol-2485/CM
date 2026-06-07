@@ -18,6 +18,7 @@ dependencies:
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.0
   cloud_firestore: ^5.4.0
+  firebase_storage: ^12.3.0
 
   # Mapa OpenStreetMap (gratuito, sem chave)
   flutter_map: ^7.0.2
@@ -32,8 +33,20 @@ dependencies:
   # Estado
   provider: ^6.1.2
 
-  # UI
+  # UI / Datas
   intl: ^0.20.0
+
+  # Lançar URLs externas
+  url_launcher: ^6.3.0
+
+  # IA Generativa (Gemini)
+  google_generative_ai: ^0.4.0
+
+  # Variáveis de ambiente
+  flutter_dotenv: ^5.2.1
+
+  # Escolha de imagens para perfil
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -44,3 +57,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - .env
