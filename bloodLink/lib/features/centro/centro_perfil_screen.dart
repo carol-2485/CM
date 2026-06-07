@@ -4,8 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../auth/services/auth_service.dart';
-import '../common/widgets/blood_drop.dart';
 import 'widgets/app_bottom_nav_centro.dart';
+import 'widgets/cabecalho_perfil_centro.dart';
+import 'widgets/cartao_info_centro.dart';
+import 'widgets/botao_terminar_sessao_centro.dart';
 
 class CentroPerfilScreen extends StatefulWidget {
   const CentroPerfilScreen({super.key});
@@ -15,24 +17,22 @@ class CentroPerfilScreen extends StatefulWidget {
 
 class _CentroPerfilScreenState extends State<CentroPerfilScreen> {
   final _auth = AuthService();
-  Map<String, dynamic>? _data;
-  bool _loading = true;
+  Map<String, dynamic>? _dados;
+  bool _carregando = true;
 
   @override
   void initState() {
     super.initState();
-    _loadCentro();
+    _carregarCentro();
   }
 
-  Future<void> _loadCentro() async {
+  Future<void> _carregarCentro() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
 
-    // Tenta pelo ID do documento
     DocumentSnapshot doc = await FirebaseFirestore.instance
         .collection('centros').doc(uid).get();
 
-    // Se não encontrar, procura pelo campo uid
     if (!doc.exists) {
       final q = await FirebaseFirestore.instance
           .collection('centros').where('uid', isEqualTo: uid).limit(1).get();
@@ -41,13 +41,13 @@ class _CentroPerfilScreenState extends State<CentroPerfilScreen> {
 
     if (mounted) {
       setState(() {
-        _data = doc.exists ? doc.data() as Map<String, dynamic>? : {};
-        _loading = false;
+        _dados = doc.exists ? doc.data() as Map<String, dynamic>? : {};
+        _carregando = false;
       });
     }
   }
 
-  Future<void> _logout() async {
+  Future<void> _terminarSessao() async {
     await _auth.logout();
     if (!mounted) return;
     Navigator.pushReplacementNamed(context, '/login');
@@ -55,124 +55,142 @@ class _CentroPerfilScreenState extends State<CentroPerfilScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_carregando) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+      );
+    }
+
+    final nome = _dados?['nome'] ?? 'Centro de Saúde';
+    final email = FirebaseAuth.instance.currentUser?.email ?? '—';
+    final morada = _dados?['morada'] ?? '—';
+    final telefone = _dados?['telefone'] ?? '—';
+    final horario = _dados?['horario'] as Map<String, dynamic>?;
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: _loading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-          : SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Header vermelho
-                    Container(
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(24),
-                          bottomRight: Radius.circular(24),
-                        ),
-                      ),
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 72, height: 72,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(0.2),
-                            ),
-                            child: const Icon(Icons.local_hospital_rounded,
-                                color: Colors.white, size: 38),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            _data?['nome'] ?? 'Centro de Saúde',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            FirebaseAuth.instance.currentUser?.email ?? '',
-                            style: const TextStyle(fontSize: 13, color: Colors.white70),
-                          ),
-                        ],
-                      ),
-                    ),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: CabecalhoPerfilCentro(nome: nome, email: email),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                _SecaoCabecalho(
+                    titulo: 'Informações do Centro',
+                    icone: Icons.local_hospital_outlined),
+                const SizedBox(height: 10),
+                CartaoInfoCentro(linhas: [
+                  LinhaInfoCentro(rotulo: 'Morada', valor: morada,
+                      icone: Icons.location_on_outlined, corIcone: const Color(0xFF0EA5E9)),
+                  LinhaInfoCentro(rotulo: 'Telefone', valor: telefone,
+                      icone: Icons.phone_outlined, corIcone: const Color(0xFF22C55E)),
+                  LinhaInfoCentro(rotulo: 'Email', valor: email,
+                      icone: Icons.email_outlined, corIcone: const Color(0xFF8B5CF6)),
+                ]),
+                const SizedBox(height: 20),
 
-                    const SizedBox(height: 24),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('INFORMAÇÕES DO CENTRO', style: TextStyle(
-                              fontSize: 11, fontWeight: FontWeight.w700,
-                              color: AppColors.textMuted, letterSpacing: 0.5)),
-                          const SizedBox(height: 12),
-
-                          _infoCard(Icons.location_on_outlined, 'Morada',
-                              _data?['morada'] ?? '—'),
-                          _infoCard(Icons.phone_outlined, 'Telefone',
-                              _data?['telefone'] ?? '—'),
-                          _infoCard(Icons.email_outlined, 'Email',
-                              FirebaseAuth.instance.currentUser?.email ?? '—'),
-                          _infoCard(Icons.pin_drop_outlined, 'Coordenadas',
-                              '${_data?['latitude'] ?? '—'}, ${_data?['longitude'] ?? '—'}'),
-
-                          const SizedBox(height: 24),
-
-                          // Botão logout
-                          OutlinedButton(
-                            onPressed: _logout,
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.error,
-                              side: const BorderSide(color: AppColors.error),
-                              minimumSize: const Size(double.infinity, 50),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            child: const Text('Terminar sessão',
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
-                          ),
-                          const SizedBox(height: 32),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                // ── Horário de funcionamento ────────────────────────────
+                _SecaoCabecalho(
+                    titulo: 'Horário de Funcionamento',
+                    icone: Icons.schedule_outlined),
+                const SizedBox(height: 10),
+                _HorarioFuncionamento(horario: horario),
+                const SizedBox(height: 28),
+                BotaoTerminarSessaoCentro(onTap: _terminarSessao),
+              ]),
             ),
+          ),
+        ],
+      ),
       bottomNavigationBar: const AppBottomNavCentro(currentIndex: 3),
     );
   }
+}
 
-  Widget _infoCard(IconData icon, String label, String value) {
+class _SecaoCabecalho extends StatelessWidget {
+  final String titulo;
+  final IconData icone;
+  const _SecaoCabecalho({required this.titulo, required this.icone});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      Icon(icone, size: 18, color: AppColors.primary),
+      const SizedBox(width: 8),
+      Text(titulo, style: const TextStyle(
+          fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.accent)),
+    ]);
+  }
+}
+
+class _HorarioFuncionamento extends StatelessWidget {
+  final Map<String, dynamic>? horario;
+  const _HorarioFuncionamento({this.horario});
+
+  // Horário padrão se não houver dados
+  static const _diasOrdem = [
+    'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'
+  ];
+  static const _diasLabels = {
+    'segunda': 'Segunda',
+    'terca': 'Terça',
+    'quarta': 'Quarta',
+    'quinta': 'Quinta',
+    'sexta': 'Sexta',
+    'sabado': 'Sábado',
+    'domingo': 'Domingo',
+  };
+  static const _horarioPadrao = {
+    'segunda': '08:00 - 18:00',
+    'terca': '08:00 - 18:00',
+    'quarta': '08:00 - 18:00',
+    'quinta': '08:00 - 18:00',
+    'sexta': '08:00 - 18:00',
+    'sabado': '09:00 - 13:00',
+    'domingo': 'Encerrado',
+  };
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
       ),
-      child: Row(children: [
-        Container(
-          width: 36, height: 36,
-          decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10)),
-          child: Icon(icon, color: AppColors.primary, size: 18),
-        ),
-        const SizedBox(width: 12),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(label, style: const TextStyle(
-              fontSize: 11, color: AppColors.textMuted, fontWeight: FontWeight.w500)),
-          Text(value, style: const TextStyle(
-              fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.accent)),
-        ])),
-      ]),
+      child: Column(
+        children: List.generate(_diasOrdem.length, (i) {
+          final chave = _diasOrdem[i];
+          final label = _diasLabels[chave] ?? chave;
+          final valor = horario?[chave] as String? ?? _horarioPadrao[chave] ?? '—';
+          final encerrado = valor == 'Encerrado';
+          final isLast = i == _diasOrdem.length - 1;
+
+          return Column(children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+              child: Row(children: [
+                Text(label,
+                    style: const TextStyle(
+                        fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500)),
+                const Spacer(),
+                Text(valor,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: encerrado ? AppColors.error : AppColors.accent,
+                    )),
+              ]),
+            ),
+            if (!isLast)
+              Divider(height: 1, color: AppColors.border.withOpacity(0.5), indent: 16, endIndent: 16),
+          ]);
+        }),
+      ),
     );
   }
 }

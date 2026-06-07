@@ -54,13 +54,15 @@ class _PedidosScreenState extends State<PedidosScreen> {
       for (final doc in snap.docs) {
         final data = doc.data();
         String nomeUser = 'Utilizador';
+        String? tipoSanguineo;
         if (data['userId'] != null) {
           try {
             final userDoc = await _db.collection('users').doc(data['userId']).get();
             nomeUser = userDoc.data()?['nome'] ?? 'Utilizador';
+            tipoSanguineo = userDoc.data()?['tipoSanguineo'];
           } catch (_) {}
         }
-        final item = {...data, 'id': doc.id, 'nomeUser': nomeUser};
+        final item = {...data, 'id': doc.id, 'nomeUser': nomeUser, 'tipoSanguineo': tipoSanguineo};
         if (data['estado'] == 'pendente') {
           pendentes.add(item);
         } else {
@@ -68,7 +70,6 @@ class _PedidosScreenState extends State<PedidosScreen> {
         }
       }
 
-      // Ordena por data+hora
       for (final list in [pendentes, confirmados]) {
         list.sort((a, b) {
           final ka = '${a['dataKey']} ${a['hora']}';
@@ -116,8 +117,10 @@ class _PedidosScreenState extends State<PedidosScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 18),
+          icon: const Icon(Icons.arrow_back_ios_new, size: 18, color: AppColors.accent),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -127,7 +130,7 @@ class _PedidosScreenState extends State<PedidosScreen> {
               onRefresh: _loadPedidos,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -136,53 +139,61 @@ class _PedidosScreenState extends State<PedidosScreen> {
                       const SizedBox(width: 8),
                       const Text('Pedidos', style: TextStyle(
                           fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.primary)),
-                    ]),
-                    const SizedBox(height: 20),
-
-                    // ── Pendentes
-                    Row(children: [
-                      const Text('AGUARDAM RESPOSTA', style: TextStyle(
-                          fontSize: 11, fontWeight: FontWeight.w700,
-                          color: AppColors.textMuted, letterSpacing: 0.5)),
-                      const SizedBox(width: 8),
+                      const Spacer(),
                       if (_pendentes.isNotEmpty)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: AppColors.primary,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Text('${_pendentes.length}',
+                          child: Text('${_pendentes.length} pendente${_pendentes.length > 1 ? 's' : ''}',
                               style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.w700)),
                         ),
                     ]),
-                    const SizedBox(height: 10),
-
-                    if (_pendentes.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: Text('Sem pedidos pendentes.', style: TextStyle(color: AppColors.textMuted)),
-                      )
-                    else
-                      ...  _pendentes.map((p) => _pedidoCard(p, isPendente: true)),
-
                     const SizedBox(height: 20),
 
-                    // ── Confirmados
-                    const Text('CONFIRMADOS', style: TextStyle(
-                        fontSize: 11, fontWeight: FontWeight.w700,
-                        color: AppColors.textMuted, letterSpacing: 0.5)),
+                    // ── Pendentes ──────────────────────────────────────────
+                    if (_pendentes.isNotEmpty) ...[
+                      _SeccaoLabel(
+                        titulo: 'AGUARDAM RESPOSTA',
+                        count: _pendentes.length,
+                        cor: AppColors.primary,
+                      ),
+                      const SizedBox(height: 10),
+                      ..._pendentes.map((p) => _PedidoCard(
+                        pedido: p,
+                        isPendente: true,
+                        onAceitar: () => _aceitar(p['id']),
+                        onRecusar: () => _recusar(p['id']),
+                        formatDataKey: _formatDataKey,
+                      )),
+                      const SizedBox(height: 20),
+                    ] else ...[
+                      _SeccaoLabel(titulo: 'AGUARDAM RESPOSTA', count: 0, cor: AppColors.textMuted),
+                      const SizedBox(height: 10),
+                      _EmptyState(mensagem: 'Sem pedidos pendentes.'),
+                      const SizedBox(height: 20),
+                    ],
+
+                    // ── Confirmados ────────────────────────────────────────
+                    _SeccaoLabel(
+                      titulo: 'CONFIRMADOS',
+                      count: _confirmados.length,
+                      cor: const Color(0xFF22C55E),
+                    ),
                     const SizedBox(height: 10),
 
                     if (_confirmados.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: Text('Sem agendamentos confirmados.', style: TextStyle(color: AppColors.textMuted)),
-                      )
+                      _EmptyState(mensagem: 'Sem agendamentos confirmados.')
                     else
-                      ..._confirmados.map((p) => _pedidoCard(p, isPendente: false)),
-
-                    const SizedBox(height: 24),
+                      ..._confirmados.map((p) => _PedidoCard(
+                        pedido: p,
+                        isPendente: false,
+                        onAceitar: () {},
+                        onRecusar: () {},
+                        formatDataKey: _formatDataKey,
+                      )),
                   ],
                 ),
               ),
@@ -190,84 +201,197 @@ class _PedidosScreenState extends State<PedidosScreen> {
       bottomNavigationBar: const AppBottomNavCentro(currentIndex: 2),
     );
   }
+}
 
-  Widget _pedidoCard(Map<String, dynamic> p, {required bool isPendente}) {
+class _SeccaoLabel extends StatelessWidget {
+  final String titulo;
+  final int count;
+  final Color cor;
+  const _SeccaoLabel({required this.titulo, required this.count, required this.cor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      Container(width: 3, height: 14, decoration: BoxDecoration(color: cor, borderRadius: BorderRadius.circular(2))),
+      const SizedBox(width: 8),
+      Text(titulo, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700,
+          color: AppColors.textMuted, letterSpacing: 0.8)),
+      if (count > 0) ...[
+        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+          decoration: BoxDecoration(color: cor.withOpacity(0.12), borderRadius: BorderRadius.circular(20)),
+          child: Text('$count', style: TextStyle(fontSize: 11, color: cor, fontWeight: FontWeight.w700)),
+        ),
+      ],
+    ]);
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  final String mensagem;
+  const _EmptyState({required this.mensagem});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(children: [
+        Icon(Icons.inbox_rounded, color: AppColors.textMuted.withOpacity(0.5), size: 20),
+        const SizedBox(width: 10),
+        Text(mensagem, style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
+      ]),
+    );
+  }
+}
+
+class _PedidoCard extends StatelessWidget {
+  final Map<String, dynamic> pedido;
+  final bool isPendente;
+  final VoidCallback onAceitar;
+  final VoidCallback onRecusar;
+  final String Function(String?) formatDataKey;
+
+  const _PedidoCard({
+    required this.pedido,
+    required this.isPendente,
+    required this.onAceitar,
+    required this.onRecusar,
+    required this.formatDataKey,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tipoSanguineo = pedido['tipoSanguineo'] as String?;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isPendente ? AppColors.primary.withOpacity(0.4) : AppColors.border,
+          color: isPendente ? AppColors.primary.withOpacity(0.35) : AppColors.border,
+          width: isPendente ? 1.5 : 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: isPendente
+                ? AppColors.primary.withOpacity(0.06)
+                : Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(children: [
-        Row(children: [
-          Container(
-            width: 40, height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.person_outline, color: AppColors.primary, size: 22),
+        // Cabeçalho colorido
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: isPendente
+                ? AppColors.primary.withOpacity(0.05)
+                : const Color(0xFF22C55E).withOpacity(0.04),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
-          const SizedBox(width: 12),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(p['nomeUser'] ?? 'Utilizador',
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.accent)),
-            Text('${_formatDataKey(p['dataKey'])} · ${p['hora']}',
-                style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
-          ])),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: isPendente
-                  ? const Color(0xFFFFF3E0)
-                  : const Color(0xFF22C55E).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              isPendente ? 'Pendente' : 'Confirmado',
-              style: TextStyle(
-                fontSize: 11, fontWeight: FontWeight.w600,
-                color: isPendente ? const Color(0xFFE65100) : const Color(0xFF22C55E),
+          child: Row(children: [
+            // Avatar com tipo sanguíneo
+            Container(
+              width: 44, height: 44,
+              decoration: BoxDecoration(
+                color: isPendente
+                    ? AppColors.primary.withOpacity(0.12)
+                    : const Color(0xFF22C55E).withOpacity(0.12),
+                shape: BoxShape.circle,
               ),
+              child: tipoSanguineo != null
+                  ? Center(
+                      child: Text(tipoSanguineo,
+                          style: TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.w800,
+                            color: isPendente ? AppColors.primary : const Color(0xFF22C55E),
+                          )),
+                    )
+                  : Icon(Icons.person_outline,
+                      color: isPendente ? AppColors.primary : const Color(0xFF22C55E),
+                      size: 22),
             ),
-          ),
-        ]),
-
-        // Botões aceitar/recusar apenas para pendentes
-        if (isPendente) ...[
-          const SizedBox(height: 12),
-          Row(children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () => _recusar(p['id']),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.error,
-                  side: const BorderSide(color: AppColors.error),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                ),
-                child: const Text('Recusar', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+            const SizedBox(width: 12),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(pedido['nomeUser'] ?? 'Utilizador',
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.accent)),
+              const SizedBox(height: 2),
+              Row(children: [
+                const Icon(Icons.calendar_today_rounded, size: 11, color: AppColors.textMuted),
+                const SizedBox(width: 4),
+                Text(formatDataKey(pedido['dataKey'] as String?),
+                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                const SizedBox(width: 10),
+                const Icon(Icons.access_time_rounded, size: 11, color: AppColors.textMuted),
+                const SizedBox(width: 4),
+                Text(pedido['hora'] ?? '—',
+                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted, fontWeight: FontWeight.w600)),
+              ]),
+            ])),
+            // Badge estado
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: isPendente
+                    ? const Color(0xFFFFF3E0)
+                    : const Color(0xFF22C55E).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () => _aceitar(p['id']),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF22C55E),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                isPendente ? 'Pendente' : 'Confirmado',
+                style: TextStyle(
+                  fontSize: 11, fontWeight: FontWeight.w700,
+                  color: isPendente ? const Color(0xFFE65100) : const Color(0xFF22C55E),
                 ),
-                child: const Text('Aceitar', style: TextStyle(
-                    fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
               ),
             ),
           ]),
-        ],
+        ),
+
+        // Botões aceitar/recusar só para pendentes
+        if (isPendente)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Row(children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: onRecusar,
+                  icon: const Icon(Icons.close_rounded, size: 16),
+                  label: const Text('Recusar'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                    side: BorderSide(color: AppColors.error.withOpacity(0.5)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: onAceitar,
+                  icon: const Icon(Icons.check_rounded, size: 16, color: Colors.white),
+                  label: const Text('Aceitar'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF22C55E),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ]),
+          ),
       ]),
     );
   }

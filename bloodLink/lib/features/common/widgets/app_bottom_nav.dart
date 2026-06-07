@@ -10,41 +10,143 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.border)),
-      ),
-      child: BottomNavigationBar(
-        currentIndex: currentIndex,
-        backgroundColor: AppColors.surface,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textMuted,
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        elevation: 0,
-        onTap: (i) {
-          if (i == currentIndex) return;
-          switch (i) {
-            case 0:
-              Navigator.pushReplacementNamed(context, AppRoutesUser.home);
-            case 1:
-              Navigator.pushNamed(context, AppRoutesUser.centros);
-            case 2:
-              Navigator.pushNamed(context, AppRoutesUser.painel);
-            case 3:
-              Navigator.pushNamed(context, AppRoutesUser.esclarecer);
-            case 4:
-              Navigator.pushNamed(context, AppRoutesUser.perfil);
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Início'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today_outlined), label: 'Agendar'),
-          BottomNavigationBarItem(icon: Icon(Icons.water_drop_outlined), label: 'Painel'),
-          BottomNavigationBarItem(icon: Icon(Icons.headset_mic_outlined), label: 'Apoio'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
+        border:
+            const Border(top: BorderSide(color: AppColors.border, width: 0.8)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, -2),
+          ),
         ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _NavItem(
+                icon: Icons.home_outlined,
+                iconActivo: Icons.home_rounded,
+                label: 'Início',
+                activo: currentIndex == 0,
+                onTap: () {
+                  if (currentIndex != 0) {
+                    Navigator.pushReplacementNamed(
+                        context, AppRoutesUser.home);
+                  }
+                },
+              ),
+              _NavItem(
+                icon: Icons.calendar_month_outlined,
+                iconActivo: Icons.calendar_month_rounded,
+                label: 'Agendar',
+                activo: currentIndex == 1,
+                onTap: () {
+                  if (currentIndex != 1) {
+                    Navigator.pushNamed(context, AppRoutesUser.centros);
+                  }
+                },
+              ),
+              _NavItem(
+                icon: Icons.water_drop_outlined,
+                iconActivo: Icons.water_drop_rounded,
+                label: 'Painel',
+                activo: currentIndex == 2,
+                onTap: () {
+                  if (currentIndex != 2) {
+                    Navigator.pushNamed(context, AppRoutesUser.painel);
+                  }
+                },
+              ),
+              _NavItem(
+                icon: Icons.headset_mic_outlined,
+                iconActivo: Icons.headset_mic_rounded,
+                label: 'Apoio',
+                activo: currentIndex == 3,
+                onTap: () {
+                  if (currentIndex != 3) {
+                    Navigator.pushNamed(context, AppRoutesUser.esclarecer);
+                  }
+                },
+              ),
+              _NavItem(
+                icon: Icons.person_outline_rounded,
+                iconActivo: Icons.person_rounded,
+                label: 'Perfil',
+                activo: currentIndex == 4,
+                onTap: () {
+                  if (currentIndex != 4) {
+                    Navigator.pushNamed(context, AppRoutesUser.perfil);
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  final IconData icon;
+  final IconData iconActivo;
+  final String label;
+  final bool activo;
+  final VoidCallback onTap;
+
+  const _NavItem({
+    required this.icon,
+    required this.iconActivo,
+    required this.label,
+    required this.activo,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: 64,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                color: activo
+                    ? AppColors.primary.withOpacity(0.12)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(
+                activo ? iconActivo : icon,
+                color: activo ? AppColors.primary : AppColors.textMuted,
+                size: 24,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight:
+                    activo ? FontWeight.w700 : FontWeight.w400,
+                color:
+                    activo ? AppColors.primary : AppColors.textMuted,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

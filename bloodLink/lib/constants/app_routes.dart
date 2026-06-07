@@ -1,18 +1,20 @@
 // lib/constants/app_routes.dart
 
 class AppRoutesUser {
-  static const String login        = '/login';
-  static const String register     = '/register';
-  static const String home         = '/home';
-  static const String aptidao      = '/aptidao';
-  static const String questionario = '/questionario';
-  static const String centros      = '/centros';
-  static const String agenda       = '/agenda';
-  static const String confirmar    = '/confirmar';
-  static const String esclarecer   = '/esclarecer';
-  static const String painel       = '/painel';
-  static const String perfil       = '/perfil';
-  static const String chats        = '/chats';
+  static const String login         = '/login';
+  static const String register      = '/register';
+  static const String home          = '/home';
+  static const String aptidao       = '/aptidao';
+  static const String questionario  = '/questionario';
+  static const String centros       = '/centros';
+  static const String agenda        = '/agenda';
+  static const String confirmar     = '/confirmar';
+  static const String esclarecer    = '/esclarecer';
+  static const String painel        = '/painel';
+  static const String perfil        = '/perfil';
+  static const String chats         = '/chats';
+  static const String notificacoes  = '/notificacoes';
+  static const String historico     = '/historico';
 }
 
 class AppRoutesCentro {

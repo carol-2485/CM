@@ -1,15 +1,24 @@
+// lib/features/home/home_screen.dart
+//
+// Ecrã inicial do utilizador após autenticação.
+// Apresenta o estado de aptidão, acesso às funcionalidades principais
+// e sincroniza automaticamente o histórico de doações ao iniciar.
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/features/common/services/chat_service.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_routes.dart';
 import '../auth/services/auth_service.dart';
+import '../common/services/chat_service.dart';
+import '../common/services/doacoes_service.dart';
 import '../common/widgets/action_tile.dart';
 import '../common/widgets/app_bottom_nav.dart';
 import '../common/widgets/profile_header.dart';
 import '../common/widgets/section_label.dart';
+import '../notificacoes/notificacoes_screen.dart';
 import 'widgets/status_card.dart';
 
+/// Ecrã inicial do utilizador autenticado.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -18,41 +27,55 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _auth = AuthService();
-  Map<String, dynamic>? _userData;
-  bool _loading = true;
+  // ── Serviços ─────────────────────────────────────────────────────────────
+  final _authService = AuthService();
+
+  // ── Estado ───────────────────────────────────────────────────────────────
+  Map<String, dynamic>? _dadosUtilizador;
+  bool _aCarregar = true;
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _carregarUtilizador();
   }
 
-  Future<void> _loadUser() async {
-    final data = await _auth.getUserData();
+  // ── Lógica de negócio ─────────────────────────────────────────────────────
+
+  /// Sincroniza doações concluídas e carrega os dados do utilizador.
+  Future<void> _carregarUtilizador() async {
+    // Sincroniza agendamentos passados antes de carregar
+    await DoacoesService.sincronizarDoacoesConcluidas();
+
+    final dados = await _authService.getUserData();
     if (mounted) {
       setState(() {
-        _userData = data;
-        _loading = false;
+        _dadosUtilizador = dados;
+        _aCarregar = false;
       });
     }
   }
 
-  Future<void> _logout() async {
-    await _auth.logout();
+  /// Termina a sessão e redireciona para o ecrã de login.
+  Future<void> _terminarSessao() async {
+    await _authService.logout();
     if (!mounted) return;
     Navigator.pushReplacementNamed(context, AppRoutesUser.login);
   }
 
   @override
   Widget build(BuildContext context) {
-    final nome = (_userData?['nome'] as String? ?? '').split(' ').first;
-    final isEligible = _userData?['isEligible'] == true;
-    final totalDoacoes = _userData?['totalDoacoes'] ?? 0;
+    // Extrai dados com valores por defeito seguros
+    final primeiroNome =
+        (_dadosUtilizador?['nome'] as String? ?? '').split(' ').first;
+    final estaApto = _dadosUtilizador?['isEligible'] == true;
+    final totalDoacoes = (_dadosUtilizador?['totalDoacoes'] ?? 0) as int;
+    final fotoUrl = _dadosUtilizador?['fotoUrl'] as String?;
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: _loading
+      body: _aCarregar
           ? const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             )
@@ -63,62 +86,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
+
+                    // Cabeçalho com avatar, nome e sininho
                     ProfileHeader(
-                      nome: nome,
+                      nome: primeiroNome,
                       subtitle: 'Pronto para salvar vidas hoje?',
-                      onLogout: _logout,
+                      onLogout: _terminarSessao,
+                      fotoUrl: fotoUrl,
+                      onNotificacoesTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const NotificacoesScreen()),
+                      ),
                     ),
                     const SizedBox(height: 24),
-                    StatusCard(isEligible: isEligible),
+
+                    // Card de estado de aptidão
+                    StatusCard(isEligible: estaApto),
                     const SizedBox(height: 24),
+
+                    // Secção de acções principais
                     const SectionLabel('O QUE QUER FAZER?'),
                     const SizedBox(height: 12),
-                    ActionTile(
-                      icon: Icons.water_drop_rounded,
-                      iconBg: AppColors.primary,
-                      title: 'Doar Sangue',
-                      subtitle: 'Agendar próxima doação',
-                      onTap: () =>
-                          Navigator.pushNamed(context, AppRoutesUser.centros),
-                    ),
-                    ActionTile(
-                      icon: Icons.history_rounded,
-                      title: 'Histórico de Doações',
-                      subtitle: '$totalDoacoes doações registadas',
-                      onTap: () {},
-                    ),
-                    ActionTile(
-                      icon: Icons.campaign_rounded,
-                      title: 'Campanhas e Eventos',
-                      subtitle: 'Em breve disponível',
-                      onTap: () {},
-                    ),
-                    ActionTile(
-                      icon: Icons.help_outline_rounded,
-                      title: 'Dúvidas e Consultas',
-                      subtitle: 'FAQ e Apoio',
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRoutesUser.esclarecer,
-                      ),
-                    ),
-                    StreamBuilder<int>(
-                      stream: ChatService().unreadCountForUser(
-                        FirebaseAuth.instance.currentUser!.uid,
-                      ),
-                      builder: (context, snapshot) {
-                        final unread = snapshot.data ?? 0;
-                        return ActionTile(
-                          icon: Icons.chat_bubble_outline,
-                          title: 'Mensagens',
-                          subtitle: unread > 0
-                              ? '$unread mensagens novas'
-                              : 'Chat com centros de saúde',
-                          badge: unread > 0 ? '$unread' : null,
-                          onTap: () =>
-                              Navigator.pushNamed(context, AppRoutesUser.chats),
-                        );
-                      },
+
+                    // Acções do utilizador
+                    _ListaAcoes(
+                      totalDoacoes: totalDoacoes,
+                      uid: uid,
                     ),
                     const SizedBox(height: 20),
                   ],
@@ -126,6 +120,76 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
       bottomNavigationBar: const AppBottomNav(currentIndex: 0),
+    );
+  }
+}
+
+// ── Widget de lista de acções ────────────────────────────────────────────────
+
+/// Lista de ActionTiles com as funcionalidades disponíveis ao utilizador.
+class _ListaAcoes extends StatelessWidget {
+  final int totalDoacoes;
+  final String uid;
+
+  const _ListaAcoes({required this.totalDoacoes, required this.uid});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Doar Sangue
+        ActionTile(
+          icon: Icons.water_drop_rounded,
+          iconBg: AppColors.primary,
+          title: 'Doar Sangue',
+          subtitle: 'Agendar próxima doação',
+          onTap: () => Navigator.pushNamed(context, AppRoutesUser.centros),
+        ),
+
+        // Histórico de Doações
+        ActionTile(
+          icon: Icons.history_rounded,
+          title: 'Histórico de Doações',
+          subtitle: '$totalDoacoes doações registadas',
+          onTap: () =>
+              Navigator.pushNamed(context, AppRoutesUser.historico),
+        ),
+
+        // Campanhas e Eventos (em breve)
+        ActionTile(
+          icon: Icons.campaign_rounded,
+          title: 'Campanhas e Eventos',
+          subtitle: 'Em breve disponível',
+          onTap: () {}, // funcionalidade futura
+        ),
+
+        // Dúvidas e Consultas
+        ActionTile(
+          icon: Icons.help_outline_rounded,
+          title: 'Dúvidas e Consultas',
+          subtitle: 'FAQ e Apoio',
+          onTap: () =>
+              Navigator.pushNamed(context, AppRoutesUser.esclarecer),
+        ),
+
+        // Mensagens — com badge de não lidas em tempo real
+        StreamBuilder<int>(
+          stream: ChatService().contagemNaoLidasUtilizador(uid),
+          builder: (context, snapshot) {
+            final naoLidas = snapshot.data ?? 0;
+            return ActionTile(
+              icon: Icons.chat_bubble_outline_rounded,
+              title: 'Mensagens',
+              subtitle: naoLidas > 0
+                  ? '$naoLidas mensagens novas'
+                  : 'Chat com centros de saúde',
+              badge: naoLidas > 0 ? '$naoLidas' : null,
+              onTap: () =>
+                  Navigator.pushNamed(context, AppRoutesUser.chats),
+            );
+          },
+        ),
+      ],
     );
   }
 }
