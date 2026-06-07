@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../common/services/chat_service.dart';
 import '../common/widgets/app_bottom_nav.dart';
-import 'chat_centro_screen.dart';
+import 'chat_com_centro_screen.dart';
 
 class ChatListaUserScreen extends StatelessWidget {
   const ChatListaUserScreen({super.key});

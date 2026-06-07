@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../constants/app_colors.dart';
-import '../chat_user/chat_centro_screen.dart';
+import '../chat_user/chat_com_centro_screen.dart';
 import '../common/services/notificacao_service.dart';
 import '../common/widgets/app_bottom_nav.dart';
 

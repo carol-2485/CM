@@ -1,92 +1,92 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import '../../constants/app_colors.dart';
-import '../common/widgets/app_bottom_nav.dart';
-import 'chat_centro_screen.dart';
+  import 'package:cloud_firestore/cloud_firestore.dart';
+  import 'package:flutter/material.dart';
+  import '../../constants/app_colors.dart';
+  import '../common/widgets/app_bottom_nav.dart';
+  import 'chat_com_centro_screen.dart';
 
-class EscolherCentroChatScreen extends StatelessWidget {
-  const EscolherCentroChatScreen({super.key});
+  class EscolherCentroChatScreen extends StatelessWidget {
+    const EscolherCentroChatScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Escolher Centro'),
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
         backgroundColor: AppColors.background,
-      ),
-      body: FutureBuilder<QuerySnapshot>(
-        future: FirebaseFirestore.instance.collection('centros').get(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            );
-          }
+        appBar: AppBar(
+          title: const Text('Escolher Centro'),
+          backgroundColor: AppColors.background,
+        ),
+        body: FutureBuilder<QuerySnapshot>(
+          future: FirebaseFirestore.instance.collection('centros').get(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
+            }
 
-          final centros = snapshot.data!.docs;
+            final centros = snapshot.data!.docs;
 
-          if (centros.isEmpty) {
-            return const Center(
-              child: Text(
-                'Nenhum centro disponível',
-                style: TextStyle(color: AppColors.textMuted),
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(20),
-            itemCount: centros.length,
-            itemBuilder: (context, index) {
-              final centro = centros[index];
-              final data = centro.data() as Map<String, dynamic>;
-              final nome = data['nome'] ?? 'Centro';
-              final morada = data['morada'] ?? '';
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.border),
+            if (centros.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Nenhum centro disponível',
+                  style: TextStyle(color: AppColors.textMuted),
                 ),
-                child: ListTile(
-                  leading: const Icon(
-                    Icons.local_hospital,
-                    color: AppColors.primary,
+              );
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: centros.length,
+              itemBuilder: (context, index) {
+                final centro = centros[index];
+                final data = centro.data() as Map<String, dynamic>;
+                final nome = data['nome'] ?? 'Centro';
+                final morada = data['morada'] ?? '';
+
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.border),
                   ),
-                  title: Text(
-                    nome,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.accent,
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.local_hospital,
+                      color: AppColors.primary,
                     ),
-                  ),
-                  subtitle: Text(
-                    morada,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textMuted,
+                    title: Text(
+                      nome,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.accent,
+                      ),
                     ),
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChatCentroScreen(
-                        centroId: centro.id,
-                        centroNome: nome,
+                    subtitle: Text(
+                      morada,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ChatCentroScreen(
+                          centroId: centro.id,
+                          centroNome: nome,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-      bottomNavigationBar: const AppBottomNav(currentIndex: 3),
-    );
+                );
+              },
+            );
+          },
+        ),
+        bottomNavigationBar: const AppBottomNav(currentIndex: 3),
+      );
+    }
   }
-}

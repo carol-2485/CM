@@ -7,7 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_application_1/features/aptidao/aptidao_screen.dart';
-import 'package:flutter_application_1/features/chat_user/chat_lista_user_screen.dart';
+import 'package:flutter_application_1/features/chat_user/lista_mensagens_user_screen.dart';
 import 'package:flutter_application_1/features/notificacoes/notificacoes_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
