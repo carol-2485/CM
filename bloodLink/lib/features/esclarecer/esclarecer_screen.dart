@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_colors.dart';
-import '../chat/chat_ia_screen.dart';
+import '../chat_ia/chat_ia_screen.dart';
 import '../common/widgets/app_bottom_nav.dart';
 import '../common/widgets/blood_drop.dart';
-import 'escolher_centro_chat_screen.dart';
+import '../chat_user/escolher_centro_chat_screen.dart';
 
 class EsclarecerScreen extends StatefulWidget {
   const EsclarecerScreen({super.key});

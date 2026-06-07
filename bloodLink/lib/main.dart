@@ -1,7 +1,8 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_application_1/features/clarify/chat_lista_user_screen.dart';
+import 'package:flutter_application_1/features/aptidao/aptidao_screen.dart';
+import 'package:flutter_application_1/features/chat_user/chat_lista_user_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -10,12 +11,11 @@ import 'constants/app_theme.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
 import 'features/home/home_screen.dart';
-import 'features/fitness/fitness_screen.dart';
 import 'features/schedule/questionario_screen.dart';
 import 'features/schedule/centros_screen.dart';
 import 'features/schedule/agenda_screen.dart';
 import 'features/schedule/confirmar_screen.dart';
-import 'features/clarify/clarify_screen.dart';
+import 'features/esclarecer/esclarecer_screen.dart';
 import 'features/painel/painel_screen.dart';
 import 'features/perfil/perfil_screen.dart';
 import 'features/centro/centro_home_screen.dart';
