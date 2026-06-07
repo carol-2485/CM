@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_application_1/features/clarify/chat_lista_user_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -70,7 +71,7 @@ class BloodLinkApp extends StatelessWidget {
         AppRoutesUser.esclarecer:   (_) => const EsclarecerScreen(),
         AppRoutesUser.painel:       (_) => const PainelScreen(),
         AppRoutesUser.perfil:       (_) => const PerfilScreen(),
-
+        AppRoutesUser.chats: (_) => const ChatListaUserScreen(),
         // ── Centro ──────────────────────────────────────
         AppRoutesCentro.home:       (_) => const CentroHomeScreen(),
         AppRoutesCentro.perfil:     (_) => const CentroPerfilScreen(),

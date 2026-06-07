@@ -12,6 +12,7 @@ class AppRoutesUser {
   static const String esclarecer   = '/esclarecer';
   static const String painel       = '/painel';
   static const String perfil       = '/perfil';
+  static const String chats        = '/chats';
 }
 
 class AppRoutesCentro {

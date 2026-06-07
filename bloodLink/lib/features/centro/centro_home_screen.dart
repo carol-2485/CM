@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/features/common/services/chat_service.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_routes.dart';
 import '../auth/services/auth_service.dart';
@@ -37,11 +38,16 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
 
     // Resolve o documento do centro
     DocumentSnapshot centroDoc = await FirebaseFirestore.instance
-        .collection('centros').doc(uid).get();
+        .collection('centros')
+        .doc(uid)
+        .get();
 
     if (!centroDoc.exists) {
       final q = await FirebaseFirestore.instance
-          .collection('centros').where('uid', isEqualTo: uid).limit(1).get();
+          .collection('centros')
+          .where('uid', isEqualTo: uid)
+          .limit(1)
+          .get();
       if (q.docs.isNotEmpty) centroDoc = q.docs.first;
     }
 
@@ -49,7 +55,8 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
 
     // Hoje em dataKey
     final hoje = DateTime.now();
-    final hojeKey = '${hoje.year}-${hoje.month.toString().padLeft(2,'0')}-${hoje.day.toString().padLeft(2,'0')}';
+    final hojeKey =
+        '${hoje.year}-${hoje.month.toString().padLeft(2, '0')}-${hoje.day.toString().padLeft(2, '0')}';
 
     // Consultas confirmadas para hoje
     final consultasSnap = await FirebaseFirestore.instance
@@ -90,7 +97,9 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : SafeArea(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -109,7 +118,8 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
                       icon: Icons.today,
                       title: 'Consultas de Hoje',
                       subtitle: '$_consultasHoje consultas agendadas para hoje',
-                      onTap: () => Navigator.pushNamed(context, AppRoutesCentro.pedidos),
+                      onTap: () =>
+                          Navigator.pushNamed(context, AppRoutesCentro.pedidos),
                     ),
                     const SizedBox(height: 24),
                     const SectionLabel('O QUE QUER FAZER?'),
@@ -119,7 +129,10 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
                       iconBg: AppColors.primary,
                       title: 'Gerir Vagas',
                       subtitle: 'Criar e editar slots disponíveis',
-                      onTap: () => Navigator.pushNamed(context, AppRoutesCentro.gerirVagas),
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        AppRoutesCentro.gerirVagas,
+                      ),
                     ),
                     ActionTile(
                       icon: Icons.pending_actions,
@@ -127,21 +140,38 @@ class _CentroHomeScreenState extends State<CentroHomeScreen> {
                       subtitle: _pedidosPendentes > 0
                           ? '$_pedidosPendentes a aguardar resposta'
                           : 'Sem pedidos pendentes',
-                      badge: _pedidosPendentes > 0 ? '$_pedidosPendentes' : null,
-                      onTap: () => Navigator.pushNamed(context, AppRoutesCentro.pedidos),
+                      badge: _pedidosPendentes > 0
+                          ? '$_pedidosPendentes'
+                          : null,
+                      onTap: () =>
+                          Navigator.pushNamed(context, AppRoutesCentro.pedidos),
                     ),
-                    ActionTile(
-                      icon: Icons.chat_bubble_outline,
-                      title: 'Mensagens',
-                      subtitle: 'Chat com doadores',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(
-                          builder: (_) => const ChatListaCentroScreen())),
+                    StreamBuilder<int>(
+                      stream: ChatService().unreadCountForCentro(_centroDocId!),
+                      builder: (context, snapshot) {
+                        final unread = snapshot.data ?? 0;
+                        return ActionTile(
+                          icon: Icons.chat_bubble_outline,
+                          title: 'Mensagens',
+                          subtitle: unread > 0
+                              ? '$unread mensagens novas'
+                              : 'Chat com doadores',
+                          badge: unread > 0 ? '$unread' : null,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ChatListaCentroScreen(),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     ActionTile(
                       icon: Icons.check_circle_outline,
                       title: 'Consultas Confirmadas',
                       subtitle: 'Ver próximas consultas',
-                      onTap: () => Navigator.pushNamed(context, AppRoutesCentro.pedidos),
+                      onTap: () =>
+                          Navigator.pushNamed(context, AppRoutesCentro.pedidos),
                     ),
                     const SizedBox(height: 20),
                   ],

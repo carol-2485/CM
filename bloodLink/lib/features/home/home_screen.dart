@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/features/common/services/chat_service.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_routes.dart';
 import '../auth/services/auth_service.dart';
@@ -76,10 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconBg: AppColors.primary,
                       title: 'Doar Sangue',
                       subtitle: 'Agendar próxima doação',
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRoutesUser.centros,
-                      ),
+                      onTap: () =>
+                          Navigator.pushNamed(context, AppRoutesUser.centros),
                     ),
                     ActionTile(
                       icon: Icons.history_rounded,
@@ -101,6 +101,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         AppRoutesUser.esclarecer,
                       ),
+                    ),
+                    StreamBuilder<int>(
+                      stream: ChatService().unreadCountForUser(
+                        FirebaseAuth.instance.currentUser!.uid,
+                      ),
+                      builder: (context, snapshot) {
+                        final unread = snapshot.data ?? 0;
+                        return ActionTile(
+                          icon: Icons.chat_bubble_outline,
+                          title: 'Mensagens',
+                          subtitle: unread > 0
+                              ? '$unread mensagens novas'
+                              : 'Chat com centros de saúde',
+                          badge: unread > 0 ? '$unread' : null,
+                          onTap: () =>
+                              Navigator.pushNamed(context, AppRoutesUser.chats),
+                        );
+                      },
                     ),
                     const SizedBox(height: 20),
                   ],
