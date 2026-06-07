@@ -7,7 +7,6 @@ import '../common/widgets/app_bottom_nav.dart';
 import '../common/widgets/profile_header.dart';
 import '../common/widgets/section_label.dart';
 import 'widgets/status_card.dart';
-import '../leave_message/messages_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -77,8 +76,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconBg: AppColors.primary,
                       title: 'Doar Sangue',
                       subtitle: 'Agendar próxima doação',
-                      onTap: () =>
-                          Navigator.pushNamed(context, AppRoutesUser.centros),
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        AppRoutesUser.centros,
+                      ),
                     ),
                     ActionTile(
                       icon: Icons.history_rounded,
@@ -99,15 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () => Navigator.pushNamed(
                         context,
                         AppRoutesUser.esclarecer,
-                      ),
-                    ),
-                    ActionTile(
-                      icon: Icons.mail_outline,
-                      title: 'Minhas Mensagens',
-                      subtitle: 'Ver respostas dos centros',
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        AppRoutesUser.myMessages,
                       ),
                     ),
                     const SizedBox(height: 20),

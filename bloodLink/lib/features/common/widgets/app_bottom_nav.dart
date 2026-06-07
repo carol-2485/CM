@@ -1,4 +1,4 @@
-// lib/widgets/app_bottom_nav.dart
+// lib/features/common/widgets/app_bottom_nav.dart
 import 'package:flutter/material.dart';
 import '../../../constants/app_colors.dart';
 import '../../../constants/app_routes.dart';
@@ -28,43 +28,22 @@ class AppBottomNav extends StatelessWidget {
           switch (i) {
             case 0:
               Navigator.pushReplacementNamed(context, AppRoutesUser.home);
-              break;
             case 1:
-              // Calendário → Centros de Doação
               Navigator.pushNamed(context, AppRoutesUser.centros);
-              break;
             case 2:
-              // Gota → Painel do Doador (futuro)
-              break;
+              Navigator.pushNamed(context, AppRoutesUser.painel);
             case 3:
               Navigator.pushNamed(context, AppRoutesUser.esclarecer);
-              break;
             case 4:
-              // Perfil (futuro)
-              break;
+              Navigator.pushNamed(context, AppRoutesUser.perfil);
           }
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_rounded),
-            label: 'Início',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today_outlined),
-            label: 'Centros',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.water_drop_outlined),
-            label: 'Painel',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.headset_mic_outlined),
-            label: 'Apoio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Perfil',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Início'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_today_outlined), label: 'Agendar'),
+          BottomNavigationBarItem(icon: Icon(Icons.water_drop_outlined), label: 'Painel'),
+          BottomNavigationBarItem(icon: Icon(Icons.headset_mic_outlined), label: 'Apoio'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Perfil'),
         ],
       ),
     );

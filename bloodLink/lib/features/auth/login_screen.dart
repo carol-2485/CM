@@ -37,10 +37,20 @@ class _LoginScreenState extends State<LoginScreen> {
       final credential = await _auth.login(_emailCtrl.text, _passCtrl.text);
       if (!mounted) return;
 
-      final centroDoc = await FirebaseFirestore.instance
+      // Verifica se é um centro — primeiro pelo ID do documento, depois pelo campo 'uid'
+      DocumentSnapshot centroDoc = await FirebaseFirestore.instance
           .collection('centros')
           .doc(credential.user!.uid)
           .get();
+
+      if (!centroDoc.exists) {
+        final query = await FirebaseFirestore.instance
+            .collection('centros')
+            .where('uid', isEqualTo: credential.user!.uid)
+            .limit(1)
+            .get();
+        if (query.docs.isNotEmpty) centroDoc = query.docs.first;
+      }
 
       if (!mounted) return;
 

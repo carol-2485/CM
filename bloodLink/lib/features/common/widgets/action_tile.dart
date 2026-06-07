@@ -8,6 +8,7 @@ class ActionTile extends StatelessWidget {
   final String subtitle;
   final VoidCallback onTap;
   final Widget? trailing;
+  final String? badge; // número a mostrar em círculo vermelho
 
   const ActionTile({
     super.key,
@@ -17,6 +18,7 @@ class ActionTile extends StatelessWidget {
     required this.onTap,
     this.iconBg = AppColors.border,
     this.trailing,
+    this.badge,
   });
 
   @override
@@ -51,30 +53,25 @@ class ActionTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.accent,
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textMuted,
-                    ),
-                  ),
+                  Text(title, style: const TextStyle(
+                    fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.accent)),
+                  Text(subtitle, style: const TextStyle(
+                    fontSize: 12, color: AppColors.textMuted)),
                 ],
               ),
             ),
-            trailing ??
-                const Icon(
-                  Icons.chevron_right,
-                  color: AppColors.textMuted,
-                  size: 20,
+            if (badge != null)
+              Container(
+                margin: const EdgeInsets.only(right: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(20),
                 ),
+                child: Text(badge!,
+                    style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w700)),
+              ),
+            trailing ?? const Icon(Icons.chevron_right, color: AppColors.textMuted, size: 20),
           ],
         ),
       ),
