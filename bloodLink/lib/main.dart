@@ -29,6 +29,7 @@ import 'features/centro/centro_perfil_screen.dart';
 import 'features/centro/gerir_vagas_screen.dart';
 import 'features/centro/pedidos_screen.dart';
 import 'features/historico/historico_doacoes_screen.dart';
+import 'features/splash/splash_screen.dart';
 
 /// Ponto de entrada da aplicação.
 /// Inicializa todos os serviços externos antes de arrancar a UI.
@@ -83,10 +84,11 @@ class BloodLinkApp extends StatelessWidget {
       locale: const Locale('pt', 'PT'),
 
       // Rota inicial — ecrã de login
-      initialRoute: AppRoutesUser.login,
+      initialRoute: AppRoutesUser.splash,
 
       routes: {
         // ── Sessão do utilizador doador ──────────────────────────────────────
+        AppRoutesUser.splash:       (_) => const SplashScreen(),
         AppRoutesUser.login:        (_) => const LoginScreen(),
         AppRoutesUser.register:     (_) => const RegisterScreen(),
         AppRoutesUser.home:         (_) => const HomeScreen(),
@@ -103,6 +105,7 @@ class BloodLinkApp extends StatelessWidget {
         AppRoutesUser.historico:    (_) => const HistoricoDoacoesScreen(),
 
         // ── Sessão do centro de saúde ────────────────────────────────────────
+        AppRoutesCentro.splash:     (_) => const SplashScreen(),
         AppRoutesCentro.home:       (_) => const CentroHomeScreen(),
         AppRoutesCentro.perfil:     (_) => const CentroPerfilScreen(),
         AppRoutesCentro.gerirVagas: (_) => const GerirVagasScreen(),
