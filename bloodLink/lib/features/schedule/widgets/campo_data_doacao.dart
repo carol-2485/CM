@@ -7,9 +7,9 @@ import '../../../constants/app_colors.dart';
 
 /// Campo de data (somente leitura) com selector de calendário.
 class CampoDataDoacao extends StatelessWidget {
-  final TextEditingController controlador;
+  final TextEditingController ctrl;
 
-  const CampoDataDoacao({super.key, required this.controlador});
+  const CampoDataDoacao({super.key, required this.ctrl});
 
   /// Abre o selector de data e formata o resultado no controlador.
   Future<void> _abrirSelectorData(BuildContext context) async {
@@ -20,7 +20,7 @@ class CampoDataDoacao extends StatelessWidget {
       lastDate: DateTime.now(),
     );
     if (dataEscolhida != null) {
-      controlador.text =
+      ctrl.text =
           '${dataEscolhida.day.toString().padLeft(2, '0')}/${dataEscolhida.month.toString().padLeft(2, '0')}/${dataEscolhida.year}';
     }
   }
@@ -28,7 +28,7 @@ class CampoDataDoacao extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controlador,
+      controller: ctrl,
       readOnly: true,
       onTap: () => _abrirSelectorData(context),
       decoration: InputDecoration(

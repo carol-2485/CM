@@ -1,15 +1,11 @@
-// lib/features/schedule/widgets/campo_medicamento.dart
-//
-// Campo de introdução do nome do medicamento, com aviso informativo
-// sobre a verificação via OpenFDA API.
-
 import 'package:flutter/material.dart';
-import '../../../constants/app_colors.dart';
+import 'package:flutter_application_1/constants/app_colors.dart';
+import 'package:flutter_application_1/features/questionario/questionario_screen.dart';
 
-/// Campo de texto para o nome do medicamento com nota explicativa.
+/// Campo de texto para o nome do medicamento (aparece quando o utilizador
+/// indica que usa medicação contínua).
 class CampoMedicamento extends StatelessWidget {
   final TextEditingController ctrl;
-
   const CampoMedicamento({super.key, required this.ctrl});
 
   @override
@@ -17,36 +13,17 @@ class CampoMedicamento extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 4),
-        // Campo de texto
         TextFormField(
           controller: ctrl,
-          decoration: InputDecoration(
-            hintText: 'Nome do medicamento *',
-            prefixIcon: const Icon(
-              Icons.medication_outlined,
-              color: AppColors.textMuted,
-            ),
-            filled: true,
-            fillColor: AppColors.surface,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-            ),
+          decoration: decoracaoCampo(
+            'Nome do medicamento *',
+            icone: Icons.medication_outlined,
           ),
           validator: (v) =>
               (v == null || v.isEmpty) ? 'Indique o nome do medicamento' : null,
         ),
         const SizedBox(height: 6),
-
-        // Nota informativa sobre a verificação
+        // Aviso informativo sobre a verificação via OpenFDA
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
