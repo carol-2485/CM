@@ -17,7 +17,7 @@ import 'constants/app_theme.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/register_screen.dart';
 import 'features/home/home_screen.dart';
-import 'features/schedule/questionario_screen.dart';
+import 'features/questionario/questionario_screen.dart';
 import 'features/schedule/centros_screen.dart';
 import 'features/schedule/agenda_screen.dart';
 import 'features/schedule/confirmar_screen.dart';
