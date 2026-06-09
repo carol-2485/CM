@@ -15,7 +15,7 @@ class AppBottomNavCentro extends StatelessWidget {
         border: const Border(top: BorderSide(color: AppColors.border, width: 0.8)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, -2),
           ),
@@ -109,7 +109,7 @@ class _NavItemCentro extends StatelessWidget {
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
-                color: activo ? AppColors.primary.withOpacity(0.12) : Colors.transparent,
+                color: activo ? AppColors.primary.withValues(alpha: 0.12) : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(

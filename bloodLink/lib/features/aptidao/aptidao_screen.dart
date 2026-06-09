@@ -31,15 +31,10 @@ class AptidaoScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Ícone informativo
               const _IconeInformativo(),
               const SizedBox(height: 32),
-
-              // Cartão de aviso
               const _CartaoAviso(),
               const SizedBox(height: 40),
-
-              // Botão de avaliar aptidão
               _BotaoAvaliar(
                 aoPremir: () => Navigator.pushNamed(
                     context, AppRoutesUser.questionario),
@@ -52,9 +47,6 @@ class AptidaoScreen extends StatelessWidget {
   }
 }
 
-// ── Widgets internos ──────────────────────────────────────────────────────────
-
-/// Ícone decorativo "i" (informação).
 class _IconeInformativo extends StatelessWidget {
   const _IconeInformativo();
 
@@ -82,7 +74,6 @@ class _IconeInformativo extends StatelessWidget {
   }
 }
 
-/// Cartão com a mensagem de aviso.
 class _CartaoAviso extends StatelessWidget {
   const _CartaoAviso();
 
@@ -104,7 +95,6 @@ class _CartaoAviso extends StatelessWidget {
   }
 }
 
-/// Botão de navegação para o questionário de aptidão.
 class _BotaoAvaliar extends StatelessWidget {
   final VoidCallback aoPremir;
   const _BotaoAvaliar({required this.aoPremir});
@@ -125,7 +115,7 @@ class _BotaoAvaliar extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(Icons.edit_rounded,

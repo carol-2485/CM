@@ -29,6 +29,7 @@ import 'features/centro/centro_perfil_screen.dart';
 import 'features/centro/gerir_vagas_screen.dart';
 import 'features/centro/pedidos_screen.dart';
 import 'features/historico/historico_doacoes_screen.dart';
+import 'features/splash/splash_screen.dart';
 
 /// Ponto de entrada da aplicação.
 /// Inicializa todos os serviços externos antes de arrancar a UI.
@@ -38,18 +39,22 @@ void main() async {
   // Carrega variáveis de ambiente (chaves de API, configuração Firebase)
   await dotenv.load(fileName: '.env');
 
-  // Inicializa o Firebase com a configuração do ficheiro .env
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: dotenv.env['FIREBASE_API_KEY']!,
-      authDomain: dotenv.env['FIREBASE_AUTH_DOMAIN']!,
-      projectId: dotenv.env['FIREBASE_PROJECT_ID']!,
-      storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET']!,
-      messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID']!,
-      appId: dotenv.env['FIREBASE_APP_ID']!,
-      measurementId: dotenv.env['FIREBASE_MEASUREMENT_ID']!,
-    ),
-  );
+  // Inicializa o Firebase — ignora se já estiver inicializado (nativo Android)
+  try {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: dotenv.env['FIREBASE_API_KEY']!,
+        authDomain: dotenv.env['FIREBASE_AUTH_DOMAIN']!,
+        projectId: dotenv.env['FIREBASE_PROJECT_ID']!,
+        storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET']!,
+        messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID']!,
+        appId: dotenv.env['FIREBASE_APP_ID']!,
+        measurementId: dotenv.env['FIREBASE_MEASUREMENT_ID']!,
+      ),
+    );
+  } catch (_) {
+    // Firebase já inicializado pelo processo nativo Android — ignorar
+  }
 
   // Inicializa dados de formatação de datas em português de Portugal
   await initializeDateFormatting('pt_PT', null);
@@ -83,10 +88,11 @@ class BloodLinkApp extends StatelessWidget {
       locale: const Locale('pt', 'PT'),
 
       // Rota inicial — ecrã de login
-      initialRoute: AppRoutesUser.login,
+      initialRoute: AppRoutesUser.splash,
 
       routes: {
         // ── Sessão do utilizador doador ──────────────────────────────────────
+        AppRoutesUser.splash:       (_) => const SplashScreen(),
         AppRoutesUser.login:        (_) => const LoginScreen(),
         AppRoutesUser.register:     (_) => const RegisterScreen(),
         AppRoutesUser.home:         (_) => const HomeScreen(),
@@ -103,6 +109,7 @@ class BloodLinkApp extends StatelessWidget {
         AppRoutesUser.historico:    (_) => const HistoricoDoacoesScreen(),
 
         // ── Sessão do centro de saúde ────────────────────────────────────────
+        AppRoutesCentro.splash:     (_) => const SplashScreen(),
         AppRoutesCentro.home:       (_) => const CentroHomeScreen(),
         AppRoutesCentro.perfil:     (_) => const CentroPerfilScreen(),
         AppRoutesCentro.gerirVagas: (_) => const GerirVagasScreen(),

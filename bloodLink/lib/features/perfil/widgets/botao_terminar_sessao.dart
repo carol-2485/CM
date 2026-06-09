@@ -13,9 +13,9 @@ class BotaoTerminarSessao extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: AppColors.error.withOpacity(0.06),
+          color: AppColors.error.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.error.withOpacity(0.3), width: 1.5),
+          border: Border.all(color: AppColors.error.withValues(alpha: 0.3), width: 1.5),
         ),
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -114,7 +114,7 @@ class _CartaoMotivo extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: cor.withOpacity(0.08),
+        color: cor.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(

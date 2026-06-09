@@ -8,13 +8,8 @@ import '../../../constants/app_colors.dart';
 
 /// Apresenta uma pergunta com opções de resposta Sim/Não via Radio buttons.
 class PerguntaSimNao extends StatelessWidget {
-  /// Texto da pergunta a apresentar ao utilizador.
   final String pergunta;
-
-  /// Valor actual da resposta (null se ainda não respondido).
   final bool? valor;
-
-  /// Callback invocado quando o utilizador altera a resposta.
   final void Function(bool) aoMudar;
 
   const PerguntaSimNao({
@@ -31,7 +26,6 @@ class PerguntaSimNao extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Texto da pergunta
           Text(
             pergunta,
             style: const TextStyle(
@@ -41,22 +35,24 @@ class PerguntaSimNao extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-
-          // Opções Sim/Não
           Row(
             children: [
               Radio<bool>(
                 value: true,
+                // ignore: deprecated_member_use
                 groupValue: valor,
-                activeColor: AppColors.primary,
+                fillColor: WidgetStateProperty.all(AppColors.primary),
+                // ignore: deprecated_member_use
                 onChanged: (v) => aoMudar(v!),
               ),
               const Text('Sim', style: TextStyle(fontSize: 13)),
               const SizedBox(width: 24),
               Radio<bool>(
                 value: false,
+                // ignore: deprecated_member_use
                 groupValue: valor,
-                activeColor: AppColors.primary,
+                fillColor: WidgetStateProperty.all(AppColors.primary),
+                // ignore: deprecated_member_use
                 onChanged: (v) => aoMudar(v!),
               ),
               const Text('Não', style: TextStyle(fontSize: 13)),

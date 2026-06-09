@@ -49,9 +49,8 @@ class _Avatar extends StatelessWidget {
       height: 46,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.primary.withOpacity(0.1),
-        border:
-            Border.all(color: AppColors.primary.withOpacity(0.2), width: 1.5),
+        color: AppColors.primary.withValues(alpha: 0.1),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2), width: 1.5),
       ),
       child: fotoUrl != null && fotoUrl!.isNotEmpty
           ? ClipOval(child: Image.network(fotoUrl!, fit: BoxFit.cover))
@@ -131,8 +130,8 @@ class _BotaoNotificacoesState extends State<_BotaoNotificacoes> {
                     height: 40,
                     decoration: BoxDecoration(
                       color: _hover
-                          ? AppColors.primary.withOpacity(0.15)
-                          : AppColors.primary.withOpacity(0.08),
+                          ? AppColors.primary.withValues(alpha: 0.15)
+                          : AppColors.primary.withValues(alpha: 0.08),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(

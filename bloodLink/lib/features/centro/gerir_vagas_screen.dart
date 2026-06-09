@@ -9,7 +9,7 @@ import 'widgets/app_bottom_nav_centro.dart';
 class _Vaga {
   final String id;
   final String hora;
-  String estado; // 'disponivel' | 'indisponivel' | 'ocupado'
+  String estado;
   String? nomeUser;
 
   _Vaga({required this.id, required this.hora, required this.estado, this.nomeUser});
@@ -49,7 +49,7 @@ class _GerirVagasScreenState extends State<GerirVagasScreen> {
     } else {
       final q = await FirebaseFirestore.instance
           .collection('centros').where('uid', isEqualTo: uid).limit(1).get();
-      if (q.docs.isNotEmpty) _centroId = q.docs.first.id;
+      if (q.docs.isNotEmpty) { _centroId = q.docs.first.id; }
     }
     _loadVagas();
   }
@@ -80,7 +80,6 @@ class _GerirVagasScreenState extends State<GerirVagasScreen> {
         docs = snap.docs;
       }
 
-      // Buscar nomes dos utilizadores para vagas ocupadas/pendentes/confirmadas
       final vagas = <_Vaga>[];
       for (final d in docs) {
         String? nomeUser;
@@ -112,7 +111,9 @@ class _GerirVagasScreenState extends State<GerirVagasScreen> {
   }
 
   Future<void> _toggleVaga(_Vaga vaga) async {
-    if (vaga.estado == 'ocupado' || vaga.estado == 'confirmado' || vaga.estado == 'pendente') return;
+    if (vaga.estado == 'ocupado' || vaga.estado == 'confirmado' || vaga.estado == 'pendente') {
+      return;
+    }
     final novoEstado = vaga.estado == 'disponivel' ? 'indisponivel' : 'disponivel';
     await _db.collection('vagas').doc(vaga.id).update({'estado': novoEstado});
     setState(() => vaga.estado = novoEstado);
@@ -158,8 +159,6 @@ class _GerirVagasScreenState extends State<GerirVagasScreen> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.primary)),
             ]),
           ),
-
-          // Navegador de dia
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
@@ -176,28 +175,24 @@ class _GerirVagasScreenState extends State<GerirVagasScreen> {
             ]),
           ),
           const SizedBox(height: 10),
-
-          // Legenda
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(children: [
               _legend(const Color(0xFF22C55E), 'Disponível'),
               const SizedBox(width: 14),
-              _legend(AppColors.textMuted.withOpacity(0.4), 'Indisponível'),
+              _legend(AppColors.textMuted.withValues(alpha: 0.4), 'Indisponível'),
               const SizedBox(width: 14),
               _legend(AppColors.primary, 'Ocupado'),
             ]),
           ),
           const SizedBox(height: 8),
-
-          // Lista
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
                 : ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
                     itemCount: _vagas.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    separatorBuilder: (_, i) => const SizedBox(height: 8),
                     itemBuilder: (ctx, i) => _VagaTile(
                       vaga: _vagas[i],
                       onToggle: () => _toggleVaga(_vagas[i]),
@@ -226,52 +221,43 @@ class _VagaTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isOcupado = vaga.estado == 'ocupado' || vaga.estado == 'confirmado' || vaga.estado == 'pendente';
     final isDisponivel = vaga.estado == 'disponivel';
-    final isIndisponivel = vaga.estado == 'indisponivel';
 
-    Color borderColor;
-    Color bgColor;
-    Color horaColor;
-    Widget trailing;
+    final Color borderColor;
+    final Color bgColor;
+    final Color horaColor;
+    final Widget trailing;
 
     if (isOcupado) {
-      // Vaga com utilizador — exibe estilo do protótipo: fundo rosado, barra vermelha
-      final estadoLabel = vaga.estado == 'confirmado'
-          ? 'confirmado'
-          : vaga.estado == 'pendente'
-              ? 'pendente'
-              : 'ocupado';
-      borderColor = AppColors.primary.withOpacity(0.3);
-      bgColor = AppColors.primary.withOpacity(0.06);
+      final estadoLabel = vaga.estado == 'confirmado' ? 'confirmado'
+          : vaga.estado == 'pendente' ? 'pendente' : 'ocupado';
+      borderColor = AppColors.primary.withValues(alpha: 0.3);
+      bgColor = AppColors.primary.withValues(alpha: 0.06);
       horaColor = AppColors.textMuted;
       trailing = Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
           color: vaga.estado == 'confirmado'
-              ? const Color(0xFF22C55E).withOpacity(0.12)
+              ? const Color(0xFF22C55E).withValues(alpha: 0.12)
               : const Color(0xFFFFF3E0),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(
-          estadoLabel,
+        child: Text(estadoLabel,
           style: TextStyle(
             fontSize: 11, fontWeight: FontWeight.w600,
-            color: vaga.estado == 'confirmado'
-                ? const Color(0xFF22C55E)
-                : const Color(0xFFE65100),
-          ),
-        ),
+            color: vaga.estado == 'confirmado' ? const Color(0xFF22C55E) : const Color(0xFFE65100),
+          )),
       );
     } else if (isDisponivel) {
-      borderColor = const Color(0xFF22C55E).withOpacity(0.4);
-      bgColor = const Color(0xFF22C55E).withOpacity(0.05);
+      borderColor = const Color(0xFF22C55E).withValues(alpha: 0.4);
+      bgColor = const Color(0xFF22C55E).withValues(alpha: 0.05);
       horaColor = AppColors.accent;
       trailing = Switch(
         value: true,
         onChanged: (_) => onToggle(),
-        activeColor: const Color(0xFF22C55E),
+        activeThumbColor: const Color(0xFF22C55E),
+        activeTrackColor: const Color(0xFF22C55E).withValues(alpha: 0.4),
       );
     } else {
-      // indisponivel
       borderColor = AppColors.border;
       bgColor = AppColors.surface;
       horaColor = AppColors.textMuted;
@@ -291,37 +277,24 @@ class _VagaTile extends StatelessWidget {
         border: Border.all(color: borderColor),
       ),
       child: Row(children: [
-        // Barra lateral colorida (estilo protótipo)
         Container(
-          width: 3,
-          height: 36,
+          width: 3, height: 36,
           decoration: BoxDecoration(
-            color: isOcupado
-                ? AppColors.primary
-                : isDisponivel
-                    ? const Color(0xFF22C55E)
-                    : AppColors.border,
+            color: isOcupado ? AppColors.primary : isDisponivel ? const Color(0xFF22C55E) : AppColors.border,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(vaga.hora,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: horaColor)),
-              if (isOcupado && vaga.nomeUser != null)
-                Text(vaga.nomeUser!,
-                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted))
-              else if (isDisponivel)
-                const Text('Vaga disponível',
-                    style: TextStyle(fontSize: 12, color: Color(0xFF22C55E)))
-              else
-                const Text('Indisponível',
-                    style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
-            ],
-          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(vaga.hora, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: horaColor)),
+            if (isOcupado && vaga.nomeUser != null)
+              Text(vaga.nomeUser!, style: const TextStyle(fontSize: 12, color: AppColors.textMuted))
+            else if (isDisponivel)
+              const Text('Vaga disponível', style: TextStyle(fontSize: 12, color: Color(0xFF22C55E)))
+            else
+              const Text('Indisponível', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+          ]),
         ),
         trailing,
       ]),
