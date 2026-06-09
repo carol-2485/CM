@@ -181,7 +181,7 @@ class _CartaoResumo extends StatelessWidget {
         children: [
           _LinhaResumo(
             icone: Icons.location_on_outlined,
-            corFundo: AppColors.primary.withOpacity(0.1),
+            corFundo: AppColors.primary.withValues(alpha: 0.1),
             corIcone: AppColors.primary,
             rotulo: 'Localidade',
             valor: nomeCentro,
@@ -189,7 +189,7 @@ class _CartaoResumo extends StatelessWidget {
           const Divider(height: 1, color: AppColors.border, indent: 16, endIndent: 16),
           _LinhaResumo(
             icone: Icons.calendar_today_outlined,
-            corFundo: const Color(0xFF22C55E).withOpacity(0.1),
+            corFundo: const Color(0xFF22C55E).withValues(alpha: 0.1),
             corIcone: const Color(0xFF22C55E),
             rotulo: 'Data e Hora',
             valor: '$hora  ·  $data',
@@ -198,7 +198,7 @@ class _CartaoResumo extends StatelessWidget {
           const Divider(height: 1, color: AppColors.border, indent: 16, endIndent: 16),
           _LinhaResumo(
             icone: Icons.water_drop_outlined,
-            corFundo: AppColors.primary.withOpacity(0.08),
+            corFundo: AppColors.primary.withValues(alpha: 0.08),
             corIcone: AppColors.primary,
             rotulo: 'Tipo de Doação',
             valor: 'Sangue total',

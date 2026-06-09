@@ -21,24 +21,17 @@ class _CentroPerfilScreenState extends State<CentroPerfilScreen> {
   bool _carregando = true;
 
   @override
-  void initState() {
-    super.initState();
-    _carregarCentro();
-  }
+  void initState() { super.initState(); _carregarCentro(); }
 
   Future<void> _carregarCentro() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
-
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('centros').doc(uid).get();
-
+    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('centros').doc(uid).get();
     if (!doc.exists) {
       final q = await FirebaseFirestore.instance
           .collection('centros').where('uid', isEqualTo: uid).limit(1).get();
       if (q.docs.isNotEmpty) doc = q.docs.first;
     }
-
     if (mounted) {
       setState(() {
         _dados = doc.exists ? doc.data() as Map<String, dynamic>? : {};
@@ -61,7 +54,6 @@ class _CentroPerfilScreenState extends State<CentroPerfilScreen> {
         body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
       );
     }
-
     final nome = _dados?['nome'] ?? 'Centro de Saúde';
     final email = FirebaseAuth.instance.currentUser?.email ?? '—';
     final morada = _dados?['morada'] ?? '—';
@@ -72,16 +64,12 @@ class _CentroPerfilScreenState extends State<CentroPerfilScreen> {
       backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: CabecalhoPerfilCentro(nome: nome, email: email),
-          ),
+          SliverToBoxAdapter(child: CabecalhoPerfilCentro(nome: nome, email: email)),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                _SecaoCabecalho(
-                    titulo: 'Informações do Centro',
-                    icone: Icons.local_hospital_outlined),
+                _SecaoCabecalho(titulo: 'Informações do Centro', icone: Icons.local_hospital_outlined),
                 const SizedBox(height: 10),
                 CartaoInfoCentro(linhas: [
                   LinhaInfoCentro(rotulo: 'Morada', valor: morada,
@@ -92,11 +80,7 @@ class _CentroPerfilScreenState extends State<CentroPerfilScreen> {
                       icone: Icons.email_outlined, corIcone: const Color(0xFF8B5CF6)),
                 ]),
                 const SizedBox(height: 20),
-
-                // ── Horário de funcionamento ────────────────────────────
-                _SecaoCabecalho(
-                    titulo: 'Horário de Funcionamento',
-                    icone: Icons.schedule_outlined),
+                _SecaoCabecalho(titulo: 'Horário de Funcionamento', icone: Icons.schedule_outlined),
                 const SizedBox(height: 10),
                 _HorarioFuncionamento(horario: horario),
                 const SizedBox(height: 28),
@@ -115,14 +99,12 @@ class _SecaoCabecalho extends StatelessWidget {
   final String titulo;
   final IconData icone;
   const _SecaoCabecalho({required this.titulo, required this.icone});
-
   @override
   Widget build(BuildContext context) {
     return Row(children: [
       Icon(icone, size: 18, color: AppColors.primary),
       const SizedBox(width: 8),
-      Text(titulo, style: const TextStyle(
-          fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.accent)),
+      Text(titulo, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.accent)),
     ]);
   }
 }
@@ -131,27 +113,14 @@ class _HorarioFuncionamento extends StatelessWidget {
   final Map<String, dynamic>? horario;
   const _HorarioFuncionamento({this.horario});
 
-  // Horário padrão se não houver dados
-  static const _diasOrdem = [
-    'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'
-  ];
+  static const _diasOrdem = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
   static const _diasLabels = {
-    'segunda': 'Segunda',
-    'terca': 'Terça',
-    'quarta': 'Quarta',
-    'quinta': 'Quinta',
-    'sexta': 'Sexta',
-    'sabado': 'Sábado',
-    'domingo': 'Domingo',
+    'segunda':'Segunda','terca':'Terça','quarta':'Quarta','quinta':'Quinta',
+    'sexta':'Sexta','sabado':'Sábado','domingo':'Domingo',
   };
   static const _horarioPadrao = {
-    'segunda': '08:00 - 18:00',
-    'terca': '08:00 - 18:00',
-    'quarta': '08:00 - 18:00',
-    'quinta': '08:00 - 18:00',
-    'sexta': '08:00 - 18:00',
-    'sabado': '09:00 - 13:00',
-    'domingo': 'Encerrado',
+    'segunda':'08:00 - 18:00','terca':'08:00 - 18:00','quarta':'08:00 - 18:00',
+    'quinta':'08:00 - 18:00','sexta':'08:00 - 18:00','sabado':'09:00 - 13:00','domingo':'Encerrado',
   };
 
   @override
@@ -169,25 +138,18 @@ class _HorarioFuncionamento extends StatelessWidget {
           final valor = horario?[chave] as String? ?? _horarioPadrao[chave] ?? '—';
           final encerrado = valor == 'Encerrado';
           final isLast = i == _diasOrdem.length - 1;
-
           return Column(children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
               child: Row(children: [
-                Text(label,
-                    style: const TextStyle(
-                        fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500)),
+                Text(label, style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500)),
                 const Spacer(),
-                Text(valor,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: encerrado ? AppColors.error : AppColors.accent,
-                    )),
+                Text(valor, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600,
+                    color: encerrado ? AppColors.error : AppColors.accent)),
               ]),
             ),
             if (!isLast)
-              Divider(height: 1, color: AppColors.border.withOpacity(0.5), indent: 16, endIndent: 16),
+              Divider(height: 1, color: AppColors.border.withValues(alpha: 0.5), indent: 16, endIndent: 16),
           ]);
         }),
       ),

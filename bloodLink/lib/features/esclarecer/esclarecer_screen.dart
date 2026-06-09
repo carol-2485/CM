@@ -13,7 +13,7 @@ import '../chat_user/escolher_centro_chat_screen.dart';
 import 'widgets/botao_iniciar.dart';
 import 'widgets/cabecalho.dart';
 import 'widgets/ilustracao.dart';
-import 'widgets/tileOpcao.dart';
+import 'widgets/tile_opcao.dart';
 
 /// Ecrã de esclarecimento de dúvidas sobre doação de sangue.
 class EsclarecerScreen extends StatefulWidget {
@@ -48,14 +48,12 @@ class _EsclarecerScreenState extends State<EsclarecerScreen> {
   Future<void> _iniciarAtendimento() async {
     switch (_opcaoSeleccionada) {
       case 0:
-        // Abre o WhatsApp com número de apoio
+        // Abre o WhatsApp (ou browser como fallback no emulador)
         const numero = '351932044469';
         final url = Uri.parse(
-          'https://wa.me/$numero?text=Olá, gostaria de esclarecer uma dúvida sobre doação de sangue.',
+          'https://wa.me/$numero?text=Ol%C3%A1%2C%20gostaria%20de%20esclarecer%20uma%20d%C3%BAvida%20sobre%20doa%C3%A7%C3%A3o%20de%20sangue.',
         );
-        if (await canLaunchUrl(url)) {
-          await launchUrl(url, mode: LaunchMode.externalApplication);
-        }
+        await launchUrl(url, mode: LaunchMode.externalApplication);
         break;
 
       case 1:

@@ -158,7 +158,7 @@ class _ChatListaCentroScreenState extends State<ChatListaCentroScreen> {
                       return ListView.separated(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         itemCount: chats.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        separatorBuilder: (_, i) => const SizedBox(height: 8),
                         itemBuilder: (ctx, i) {
                           final dados =
                               chats[i].data() as Map<String, dynamic>;
@@ -261,12 +261,12 @@ class _CartaoChatState extends State<_CartaoChat> {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             color: destacado
-                ? AppColors.primary.withOpacity(0.06)
+                ? AppColors.primary.withValues(alpha: 0.06)
                 : AppColors.surface,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: destacado
-                  ? AppColors.primary.withOpacity(0.4)
+                  ? AppColors.primary.withValues(alpha: 0.4)
                   : AppColors.border,
               width: destacado ? 1.5 : 1,
             ),
@@ -389,11 +389,11 @@ class _AvatarUtilizador extends StatelessWidget {
       height: 46,
       decoration: BoxDecoration(
         color: temNaoLidas
-            ? AppColors.primary.withOpacity(0.15)
-            : AppColors.primary.withOpacity(0.08),
+            ? AppColors.primary.withValues(alpha: 0.15)
+            : AppColors.primary.withValues(alpha: 0.08),
         shape: BoxShape.circle,
         border: temNaoLidas
-            ? Border.all(color: AppColors.primary.withOpacity(0.4), width: 2)
+            ? Border.all(color: AppColors.primary.withValues(alpha: 0.4), width: 2)
             : null,
       ),
       child: Center(

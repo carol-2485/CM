@@ -303,7 +303,7 @@ class _CampoMedicamento extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.06),
+            color: AppColors.primary.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Row(
@@ -387,14 +387,18 @@ class _PerguntaSimNao extends StatelessWidget {
             children: [
               Radio<bool>(
                   value: true,
+                  // ignore: deprecated_member_use
                   groupValue: valor,
+                  // ignore: deprecated_member_use
                   onChanged: (v) => aoAlterar(v!)),
               const Text('Sim',
                   style: TextStyle(fontSize: 13)),
               const SizedBox(width: 24),
               Radio<bool>(
                   value: false,
+                  // ignore: deprecated_member_use
                   groupValue: valor,
+                  // ignore: deprecated_member_use
                   onChanged: (v) => aoAlterar(v!)),
               const Text('Não',
                   style: TextStyle(fontSize: 13)),
@@ -498,7 +502,7 @@ class _DialogoResultado extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: cor.withOpacity(0.08),
+                color: cor.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
