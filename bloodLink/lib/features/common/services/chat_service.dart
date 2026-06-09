@@ -139,6 +139,7 @@ class ChatService {
     return _db
         .collection('chats')
         .where('centroId', isEqualTo: centroId)
+        .orderBy('ultimaHora', descending: true)
         .snapshots();
   }
 
