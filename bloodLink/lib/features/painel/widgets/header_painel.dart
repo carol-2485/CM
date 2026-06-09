@@ -1,7 +1,6 @@
 // lib/features/painel/widgets/header_painel.dart
 import 'package:flutter/material.dart';
 import '../../../constants/app_colors.dart';
-import '../../../constants/app_routes.dart';
 import '../../common/services/notificacao_service.dart';
 import 'contador_painel.dart';
 
@@ -112,8 +111,8 @@ class _IdentidadeDoador extends StatelessWidget {
         width: 52, height: 52,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.white.withOpacity(0.2),
-          border: Border.all(color: Colors.white.withOpacity(0.4), width: 2),
+          color: Colors.white.withValues(alpha: 0.2),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 2),
         ),
         child: fotoUrl != null && fotoUrl!.isNotEmpty
             ? ClipOval(child: Image.network(fotoUrl!, fit: BoxFit.cover))

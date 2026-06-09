@@ -59,7 +59,7 @@ class _LinhaInfoWidget extends StatelessWidget {
           width: 34,
           height: 34,
           decoration: BoxDecoration(
-            color: linha.corIcone.withOpacity(0.1),
+            color: linha.corIcone.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(9),
           ),
           child: Icon(linha.icone, color: linha.corIcone, size: 18),

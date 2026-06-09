@@ -94,7 +94,7 @@ class _AvatarEstatico extends StatelessWidget {
       width: 96, height: 96,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         border: Border.all(color: Colors.white, width: 3),
       ),
       child: const Icon(Icons.person_rounded, color: Colors.white, size: 52),
@@ -153,7 +153,7 @@ class _Separador extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 1, height: 32,
-      color: Colors.white.withOpacity(0.3),
+      color: Colors.white.withValues(alpha: 0.3),
       margin: const EdgeInsets.symmetric(horizontal: 8),
     );
   }

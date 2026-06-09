@@ -75,12 +75,12 @@ class _ActionTileState extends State<ActionTile> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
             color: _destacado
-                ? AppColors.primary.withOpacity(0.06)
+                ? AppColors.primary.withValues(alpha: 0.06)
                 : AppColors.surface,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: _destacado
-                  ? AppColors.primary.withOpacity(0.4)
+                  ? AppColors.primary.withValues(alpha: 0.4)
                   : AppColors.border,
               width: _destacado ? 1.5 : 1,
             ),
@@ -147,8 +147,8 @@ class _IconeTile extends StatelessWidget {
       height: 40,
       decoration: BoxDecoration(
         color: destacado
-            ? corIcone.withOpacity(0.22)
-            : iconBg.withOpacity(0.15),
+            ? corIcone.withValues(alpha: 0.22)
+            : iconBg.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(icone, color: corIcone, size: 22),

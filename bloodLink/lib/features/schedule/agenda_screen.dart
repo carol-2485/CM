@@ -8,8 +8,6 @@ import '../common/widgets/blood_drop.dart';
 import '../common/widgets/app_bottom_nav.dart';
 import 'widgets/indicador_passos.dart';
 
-/// Horários padrão de funcionamento por dia da semana.
-/// Usado quando o centro não tem horário definido no Firestore.
 const _horariosPadrao = {
   'segunda':  ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'],
   'terca':    ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'],
@@ -17,10 +15,9 @@ const _horariosPadrao = {
   'quinta':   ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'],
   'sexta':    ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'],
   'sabado':   ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30'],
-  'domingo':  [], // encerrado por defeito
+  'domingo':  [],
 };
 
-/// Converte o weekday do Dart (1=Segunda, 7=Domingo) para a chave do mapa.
 String _chaveDiaSemana(int weekday) {
   const dias = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
   return dias[(weekday - 1).clamp(0, 6)];
@@ -33,7 +30,6 @@ class AgendaScreen extends StatefulWidget {
 }
 
 class _AgendaScreenState extends State<AgendaScreen> {
-  final _vagasService = VagasService();
   DateTime _selectedDate = DateTime.now();
   List<Vaga> _vagas = [];
   bool _loading = false;
@@ -61,18 +57,14 @@ class _AgendaScreenState extends State<AgendaScreen> {
     final chave = VagasService.chaveData(_selectedDate);
     final db = FirebaseFirestore.instance;
 
-    // Verifica se já existem vagas para este dia
-    var snap = await db
-        .collection('vagas')
+    var snap = await db.collection('vagas')
         .where('centroId', isEqualTo: _centroId)
         .where('dataKey', isEqualTo: chave)
         .get();
 
-    // Se não existirem, gera automaticamente com base no horário do centro
     if (snap.docs.isEmpty) {
       await _gerarVagasParaDia(_selectedDate, chave, db);
-      snap = await db
-          .collection('vagas')
+      snap = await db.collection('vagas')
           .where('centroId', isEqualTo: _centroId)
           .where('dataKey', isEqualTo: chave)
           .get();
@@ -81,11 +73,9 @@ class _AgendaScreenState extends State<AgendaScreen> {
     final todasVagas = snap.docs.map(Vaga.fromFirestore).toList()
       ..sort((a, b) => a.hora.compareTo(b.hora));
 
-    // Filtra horas já passadas quando é hoje
     final agora = DateTime.now();
     final ehHoje = _selectedDate.year == agora.year &&
-        _selectedDate.month == agora.month &&
-        _selectedDate.day == agora.day;
+        _selectedDate.month == agora.month && _selectedDate.day == agora.day;
 
     final vagas = ehHoje
         ? todasVagas.where((v) {
@@ -100,74 +90,50 @@ class _AgendaScreenState extends State<AgendaScreen> {
     if (mounted) setState(() { _vagas = vagas; _loading = false; });
   }
 
-  /// Gera vagas para um dia com base no horário de funcionamento do centro.
-  /// Se o centro tiver o campo 'horario' no Firestore, usa-o.
-  /// Caso contrário usa os horários padrão.
-  Future<void> _gerarVagasParaDia(
-      DateTime dia, String chave, FirebaseFirestore db) async {
-    // Determina o dia da semana
+  Future<void> _gerarVagasParaDia(DateTime dia, String chave, FirebaseFirestore db) async {
     final chaveDia = _chaveDiaSemana(dia.weekday);
-
-    // Tenta ler o horário do centro no Firestore
     List<String> horarios = List<String>.from(_horariosPadrao[chaveDia] ?? []);
     try {
-      final centroDoc =
-          await db.collection('centros').doc(_centroId).get();
-      final horarioMapa =
-          centroDoc.data()?['horario'] as Map<String, dynamic>?;
+      final centroDoc = await db.collection('centros').doc(_centroId).get();
+      final horarioMapa = centroDoc.data()?['horario'] as Map<String, dynamic>?;
       if (horarioMapa != null) {
         final valorDia = horarioMapa[chaveDia] as String?;
         if (valorDia == null || valorDia == 'Encerrado') {
-          horarios = []; // encerrado
+          horarios = [];
         } else {
-          // Formato esperado: '09:00 - 18:00'
           horarios = _gerarSlotsDeIntervalo(valorDia);
         }
       }
     } catch (_) {}
 
-    if (horarios.isEmpty) return; // centro encerrado neste dia
+    if (horarios.isEmpty) return;
 
-    // Cria as vagas em batch
     final batch = db.batch();
     for (final hora in horarios) {
       final ref = db.collection('vagas').doc();
-      batch.set(ref, {
-        'centroId': _centroId,
-        'dataKey': chave,
-        'hora': hora,
-        'estado': 'disponivel',
-        'userId': null,
-      });
+      batch.set(ref, {'centroId': _centroId, 'dataKey': chave, 'hora': hora, 'estado': 'disponivel', 'userId': null});
     }
     await batch.commit();
   }
 
-  /// Gera slots de 30 em 30 minutos a partir de um intervalo 'HH:mm - HH:mm'.
   List<String> _gerarSlotsDeIntervalo(String intervalo) {
     try {
       final partes = intervalo.split(' - ');
       if (partes.length != 2) return [];
       final inicioP = partes[0].trim().split(':');
       final fimP = partes[1].trim().split(':');
-      final inicio = TimeOfDay(
-          hour: int.parse(inicioP[0]), minute: int.parse(inicioP[1]));
-      final fim = TimeOfDay(
-          hour: int.parse(fimP[0]), minute: int.parse(fimP[1]));
-
+      final inicio = TimeOfDay(hour: int.parse(inicioP[0]), minute: int.parse(inicioP[1]));
+      final fim = TimeOfDay(hour: int.parse(fimP[0]), minute: int.parse(fimP[1]));
       final slots = <String>[];
       var h = inicio.hour;
       var m = inicio.minute;
       while (h < fim.hour || (h == fim.hour && m < fim.minute)) {
-        slots.add(
-            '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}');
+        slots.add('${h.toString().padLeft(2,'0')}:${m.toString().padLeft(2,'0')}');
         m += 30;
         if (m >= 60) { m -= 60; h++; }
       }
       return slots;
-    } catch (_) {
-      return [];
-    }
+    } catch (_) { return []; }
   }
 
   void _onDaySelected(DateTime day) {
@@ -185,8 +151,7 @@ class _AgendaScreenState extends State<AgendaScreen> {
       return;
     }
     Navigator.pushNamed(context, AppRoutesUser.confirmar, arguments: {
-      'vaga': _selectedVaga!,
-      'centroNome': _centroNome,
+      'vaga': _selectedVaga!, 'centroNome': _centroNome,
     });
   }
 
@@ -213,30 +178,23 @@ class _AgendaScreenState extends State<AgendaScreen> {
             ]),
           ),
           const SizedBox(height: 8),
-          _buildStepper(),
+          const IndicadorPassos(passoActual: 2),
           const SizedBox(height: 10),
-
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Calendário
                   Container(
                     decoration: BoxDecoration(
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: AppColors.border),
                     ),
-                    child: _CalendarioWidget(
-                      selectedDate: _selectedDate,
-                      onDaySelected: _onDaySelected,
-                    ),
+                    child: _CalendarioWidget(selectedDate: _selectedDate, onDaySelected: _onDaySelected),
                   ),
                   const SizedBox(height: 12),
-
-                  // Data + legenda
                   Text(_formatDate(_selectedDate), style: const TextStyle(
                       fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.primary)),
                   const SizedBox(height: 6),
@@ -248,8 +206,6 @@ class _AgendaScreenState extends State<AgendaScreen> {
                     _legend(const Color(0xFFB8A898), 'Indisponível'),
                   ]),
                   const SizedBox(height: 10),
-
-                  // Vagas
                   if (_loading)
                     const Center(child: Padding(
                       padding: EdgeInsets.all(24),
@@ -266,7 +222,7 @@ class _AgendaScreenState extends State<AgendaScreen> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: _vagas.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 6),
+                      separatorBuilder: (_, i) => const SizedBox(height: 6),
                       itemBuilder: (ctx, i) => _VagaTile(
                         vaga: _vagas[i],
                         isSelected: _selectedVaga?.id == _vagas[i].id,
@@ -277,10 +233,7 @@ class _AgendaScreenState extends State<AgendaScreen> {
                         },
                       ),
                     ),
-
                   const SizedBox(height: 16),
-
-                  // Botões
                   Row(children: [
                     Expanded(
                       child: OutlinedButton(
@@ -330,17 +283,12 @@ class _AgendaScreenState extends State<AgendaScreen> {
     const SizedBox(width: 4),
     Text(label, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
   ]);
-
-  Widget _buildStepper() => const IndicadorPassos(passoActual: 2);
 }
-
-// ── Calendário ─────────────────────────────────────────────────────────────
 
 class _CalendarioWidget extends StatefulWidget {
   final DateTime selectedDate;
   final void Function(DateTime) onDaySelected;
   const _CalendarioWidget({required this.selectedDate, required this.onDaySelected});
-
   @override
   State<_CalendarioWidget> createState() => _CalendarioWidgetState();
 }
@@ -400,7 +348,7 @@ class _CalendarioWidgetState extends State<_CalendarioWidget> {
               child: Container(
                 margin: const EdgeInsets.all(2),
                 decoration: BoxDecoration(shape: BoxShape.circle,
-                  color: isSel ? AppColors.primary : (isToday ? AppColors.primary.withOpacity(0.15) : null)),
+                  color: isSel ? AppColors.primary : (isToday ? AppColors.primary.withValues(alpha: 0.15) : null)),
                 child: Center(child: Text('${day.day}', style: TextStyle(
                   fontSize: 12,
                   fontWeight: isSel || isToday ? FontWeight.w700 : FontWeight.normal,
@@ -415,8 +363,6 @@ class _CalendarioWidgetState extends State<_CalendarioWidget> {
   }
 }
 
-// ── Tile de vaga — estilo protótipo (linha colorida simples) ───────────────
-
 class _VagaTile extends StatelessWidget {
   final Vaga vaga;
   final bool isSelected;
@@ -429,35 +375,27 @@ class _VagaTile extends StatelessWidget {
     final isOcupado = vaga.estado == 'ocupado' || vaga.estado == 'confirmado' || vaga.estado == 'pendente';
     final isIndisponivel = vaga.estado == 'indisponivel';
 
-    // Cores base por estado
-    final Color dotColor = isDisponivel
-        ? const Color(0xFF22C55E)
+    final Color dotColor = isDisponivel ? const Color(0xFF22C55E)
         : isOcupado ? AppColors.primary : const Color(0xFFB8A898);
-
-    final Color textColor = isDisponivel
-        ? const Color(0xFF22C55E)
+    final Color textColor = isDisponivel ? const Color(0xFF22C55E)
         : isOcupado ? AppColors.primary : const Color(0xFFB8A898);
-
-    final String label = isDisponivel
-        ? 'Vaga disponível'
+    final String label = isDisponivel ? 'Vaga disponível'
         : isOcupado ? 'Vaga ocupada' : 'Indisponível';
 
-    // Fundo colorido suave por estado
     Color bgColor;
     Color borderColor;
     if (isSelected) {
-      bgColor = AppColors.primary.withOpacity(0.10);
+      bgColor = AppColors.primary.withValues(alpha: 0.10);
       borderColor = AppColors.primary;
     } else if (isDisponivel) {
-      bgColor = const Color(0xFF22C55E).withOpacity(0.07);
-      borderColor = const Color(0xFF22C55E).withOpacity(0.35);
+      bgColor = const Color(0xFF22C55E).withValues(alpha: 0.07);
+      borderColor = const Color(0xFF22C55E).withValues(alpha: 0.35);
     } else if (isIndisponivel) {
-      bgColor = const Color(0xFFB8A898).withOpacity(0.08);
-      borderColor = const Color(0xFFB8A898).withOpacity(0.35);
+      bgColor = const Color(0xFFB8A898).withValues(alpha: 0.08);
+      borderColor = const Color(0xFFB8A898).withValues(alpha: 0.35);
     } else {
-      // ocupado
-      bgColor = AppColors.primary.withOpacity(0.05);
-      borderColor = AppColors.primary.withOpacity(0.25);
+      bgColor = AppColors.primary.withValues(alpha: 0.05);
+      borderColor = AppColors.primary.withValues(alpha: 0.25);
     }
 
     return GestureDetector(
@@ -477,8 +415,7 @@ class _VagaTile extends StatelessWidget {
                 fontSize: 15, fontWeight: FontWeight.w700,
                 color: isDisponivel ? AppColors.accent : textColor)),
           ),
-          Container(width: 8, height: 8,
-              decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle)),
+          Container(width: 8, height: 8, decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle)),
           const SizedBox(width: 8),
           Expanded(child: Text(label, style: TextStyle(
               fontSize: 13, color: textColor, fontWeight: FontWeight.w600))),

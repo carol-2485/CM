@@ -34,7 +34,7 @@ class CardEstado extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: corEstado.withOpacity(0.12),
+              color: corEstado.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -90,9 +90,9 @@ class _BadgeApto extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       decoration: BoxDecoration(
-        color: cor.withOpacity(0.1),
+        color: cor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: cor.withOpacity(0.3)),
+        border: Border.all(color: cor.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

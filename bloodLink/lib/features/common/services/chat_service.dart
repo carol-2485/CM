@@ -12,9 +12,13 @@ class ChatService {
 
     final doc = await _db.collection('chats').doc(chatId).get();
     if (!doc.exists) {
+      final centroDoc = await _db.collection('centros').doc(centroId).get();
+      final centroNome = (centroDoc.data()?['nome'] as String?) ?? 'Centro';
+
       await _db.collection('chats').doc(chatId).set({
         'userId': uid,
         'centroId': centroId,
+        'centroNome': centroNome, // ← guardado uma única vez
         'criadoEm': FieldValue.serverTimestamp(),
         'ultimaMensagem': '',
         'ultimaHora': FieldValue.serverTimestamp(),
@@ -29,7 +33,11 @@ class ChatService {
   /// Se o remetente for o centro, cria também uma notificação para o utilizador.
   Future<void> enviarMensagem(String chatId, String texto, String tipo) async {
     final batch = _db.batch();
-    final msgRef = _db.collection('chats').doc(chatId).collection('mensagens').doc();
+    final msgRef = _db
+        .collection('chats')
+        .doc(chatId)
+        .collection('mensagens')
+        .doc();
     final chatRef = _db.collection('chats').doc(chatId);
 
     batch.set(msgRef, {
@@ -60,7 +68,10 @@ class ChatService {
         try {
           final centroId = chatDoc.data()?['centroId'] as String?;
           if (centroId != null) {
-            final centroDoc = await _db.collection('centros').doc(centroId).get();
+            final centroDoc = await _db
+                .collection('centros')
+                .doc(centroId)
+                .get();
             nomeRemetente = centroDoc.data()?['nome'] ?? nomeRemetente;
           }
         } catch (_) {}
@@ -82,7 +93,9 @@ class ChatService {
               (notifExistente.docs.first.data()['contagem'] as int?) ?? 1;
           await docRef.update({
             'contagem': contagemActual + 1,
-            'mensagem': texto.length > 80 ? '${texto.substring(0, 80)}…' : texto,
+            'mensagem': texto.length > 80
+                ? '${texto.substring(0, 80)}…'
+                : texto,
             'criadaEm': FieldValue.serverTimestamp(),
           });
         } else {
@@ -136,12 +149,12 @@ class ChatService {
         .where('centroId', isEqualTo: centroId)
         .snapshots()
         .map((snapshot) {
-      int total = 0;
-      for (final doc in snapshot.docs) {
-        total += (doc.data()['unreadByCentro'] ?? 0) as int;
-      }
-      return total;
-    });
+          int total = 0;
+          for (final doc in snapshot.docs) {
+            total += (doc.data()['unreadByCentro'] ?? 0) as int;
+          }
+          return total;
+        });
   }
 
   /// Total de mensagens não lidas pelo utilizador (soma de todos os chats)
@@ -151,15 +164,17 @@ class ChatService {
         .where('userId', isEqualTo: userId)
         .snapshots()
         .map((snapshot) {
-      int total = 0;
-      for (final doc in snapshot.docs) {
-        total += (doc.data()['unreadByUser'] ?? 0) as int;
-      }
-      return total;
-    });
+          int total = 0;
+          for (final doc in snapshot.docs) {
+            total += (doc.data()['unreadByUser'] ?? 0) as int;
+          }
+          return total;
+        });
   }
 
   // Manter compatibilidade com código legado
-  Stream<int> unreadCountForUser(String userId) => contagemNaoLidasUtilizador(userId);
-  Stream<int> unreadCountForCentro(String centroId) => contagemNaoLidasCentro(centroId);
+  Stream<int> unreadCountForUser(String userId) =>
+      contagemNaoLidasUtilizador(userId);
+  Stream<int> unreadCountForCentro(String centroId) =>
+      contagemNaoLidasCentro(centroId);
 }

@@ -220,7 +220,7 @@ class _SeccaoLabel extends StatelessWidget {
         const SizedBox(width: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-          decoration: BoxDecoration(color: cor.withOpacity(0.12), borderRadius: BorderRadius.circular(20)),
+          decoration: BoxDecoration(color: cor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(20)),
           child: Text('$count', style: TextStyle(fontSize: 11, color: cor, fontWeight: FontWeight.w700)),
         ),
       ],
@@ -242,7 +242,7 @@ class _EmptyState extends StatelessWidget {
         border: Border.all(color: AppColors.border),
       ),
       child: Row(children: [
-        Icon(Icons.inbox_rounded, color: AppColors.textMuted.withOpacity(0.5), size: 20),
+        Icon(Icons.inbox_rounded, color: AppColors.textMuted.withValues(alpha: 0.5), size: 20),
         const SizedBox(width: 10),
         Text(mensagem, style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
       ]),
@@ -275,14 +275,14 @@ class _PedidoCard extends StatelessWidget {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isPendente ? AppColors.primary.withOpacity(0.35) : AppColors.border,
+          color: isPendente ? AppColors.primary.withValues(alpha: 0.35) : AppColors.border,
           width: isPendente ? 1.5 : 1,
         ),
         boxShadow: [
           BoxShadow(
             color: isPendente
-                ? AppColors.primary.withOpacity(0.06)
-                : Colors.black.withOpacity(0.03),
+                ? AppColors.primary.withValues(alpha: 0.06)
+                : Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -294,8 +294,8 @@ class _PedidoCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: isPendente
-                ? AppColors.primary.withOpacity(0.05)
-                : const Color(0xFF22C55E).withOpacity(0.04),
+                ? AppColors.primary.withValues(alpha: 0.05)
+                : const Color(0xFF22C55E).withValues(alpha: 0.04),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
           child: Row(children: [
@@ -304,8 +304,8 @@ class _PedidoCard extends StatelessWidget {
               width: 44, height: 44,
               decoration: BoxDecoration(
                 color: isPendente
-                    ? AppColors.primary.withOpacity(0.12)
-                    : const Color(0xFF22C55E).withOpacity(0.12),
+                    ? AppColors.primary.withValues(alpha: 0.12)
+                    : const Color(0xFF22C55E).withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: tipoSanguineo != null
@@ -343,7 +343,7 @@ class _PedidoCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isPendente
                     ? const Color(0xFFFFF3E0)
-                    : const Color(0xFF22C55E).withOpacity(0.1),
+                    : const Color(0xFF22C55E).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -369,7 +369,7 @@ class _PedidoCard extends StatelessWidget {
                   label: const Text('Recusar'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.error,
-                    side: BorderSide(color: AppColors.error.withOpacity(0.5)),
+                    side: BorderSide(color: AppColors.error.withValues(alpha: 0.5)),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),

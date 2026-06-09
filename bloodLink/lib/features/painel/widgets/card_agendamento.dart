@@ -50,7 +50,7 @@ class CardAgendamento extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
@@ -155,8 +155,8 @@ class _BadgeEstado extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: confirmado
-            ? const Color(0xFF22C55E).withOpacity(0.12)
-            : const Color(0xFFFFF3E0),
+        ? const Color(0xFF22C55E).withValues(alpha: 0.12)
+        : const Color(0xFFFFF3E0),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

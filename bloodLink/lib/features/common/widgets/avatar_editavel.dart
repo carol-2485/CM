@@ -63,7 +63,7 @@ class _CirculoAvatar extends StatelessWidget {
       width: raio * 2, height: raio * 2,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: corFundo.withOpacity(0.2),
+        color: corFundo.withValues(alpha: 0.2),
         border: Border.all(color: corFundo, width: 3),
       ),
       child: carregando
@@ -86,7 +86,7 @@ class _BotaoCamara extends StatelessWidget {
       width: 30, height: 30,
       decoration: BoxDecoration(
         color: Colors.white, shape: BoxShape.circle,
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 4)],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 4)],
       ),
       child: Icon(Icons.camera_alt_rounded, color: corIcone, size: 16),
     );
@@ -209,9 +209,9 @@ class _OpcaoRemover extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.error.withOpacity(0.05),
+          color: AppColors.error.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.error.withOpacity(0.2)),
+          border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
         ),
         child: const Row(children: [
           Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 22),
