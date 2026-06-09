@@ -18,7 +18,6 @@ import '../../constants/app_routes.dart';
 import '../auth/services/auth_service.dart';
 import 'services/openfda_service.dart';
 import '../common/widgets/app_bottom_nav.dart';
-import '../common/widgets/blood_drop.dart';
 
 /// Ecrã do Questionário de Aptidão para Doação de Sangue.
 class QuestionarioScreen extends StatefulWidget {

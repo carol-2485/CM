@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../constants/app_colors.dart';
+import '../../../../constants/app_colors.dart';
 
 /// Bolha individual de uma mensagem no chat.
 /// [isUser] indica se a mensagem é de quem está a ver o ecrã (fica à direita).

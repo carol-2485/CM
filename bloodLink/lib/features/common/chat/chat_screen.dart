@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../../constants/app_colors.dart';
-import '../common/services/chat_service.dart';
+import '../../../constants/app_colors.dart';
+import '../services/chat_service.dart';
 import 'widgets/bolha_chat.dart';
 
 /// Ecrã de chat universal, usado tanto pelo lado do utilizador

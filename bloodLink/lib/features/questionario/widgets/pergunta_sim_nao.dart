@@ -1,7 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_application_1/constants/app_colors.dart';
+// lib/features/schedule/widgets/pergunta_sim_nao.dart
+//
+// Widget reutilizável para perguntas de resposta binária (Sim/Não)
+// utilizadas no questionário de aptidão para doação de sangue.
 
-/// Par de radio buttons "Sim / Não" para uma pergunta fechada.
+import 'package:flutter/material.dart';
+import '../../../constants/app_colors.dart';
+
+/// Apresenta uma pergunta com opções de resposta Sim/Não via Radio buttons.
 class PerguntaSimNao extends StatelessWidget {
   final String pergunta;
   final bool? valor;
@@ -24,26 +29,33 @@ class PerguntaSimNao extends StatelessWidget {
           Text(
             pergunta,
             style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary),
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textPrimary,
+            ),
           ),
           const SizedBox(height: 6),
           Row(
             children: [
               Radio<bool>(
-                  value: true,
-                  groupValue: valor,
-                  onChanged: (v) => onChange(v!)),
-              const Text('Sim',
-                  style: TextStyle(fontSize: 13)),
+                value: true,
+                // ignore: deprecated_member_use
+                groupValue: valor,
+                fillColor: WidgetStateProperty.all(AppColors.primary),
+                // ignore: deprecated_member_use
+                onChanged: (v) => onChange(v!),
+              ),
+              const Text('Sim', style: TextStyle(fontSize: 13)),
               const SizedBox(width: 24),
               Radio<bool>(
-                  value: false,
-                  groupValue: valor,
-                  onChanged: (v) => onChange(v!)),
-              const Text('Não',
-                  style: TextStyle(fontSize: 13)),
+                value: false,
+                // ignore: deprecated_member_use
+                groupValue: valor,
+                fillColor: WidgetStateProperty.all(AppColors.primary),
+                // ignore: deprecated_member_use
+                onChanged: (v) => onChange(v!),
+              ),
+              const Text('Não', style: TextStyle(fontSize: 13)),
             ],
           ),
         ],

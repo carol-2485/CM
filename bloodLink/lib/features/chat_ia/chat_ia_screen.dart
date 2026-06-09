@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/features/chat_ia/services/gemini_service.dart';
 import '../../constants/app_colors.dart';
+import '../common/chat/widgets/bolha_chat.dart';
 
 class ChatIAScreen extends StatefulWidget {
   const ChatIAScreen({super.key});
@@ -61,29 +62,9 @@ class _ChatIAScreenState extends State<ChatIAScreen> {
               itemCount: _mensagens.length,
               itemBuilder: (context, index) {
                 final msg = _mensagens[index];
-                final isUser = msg['isUser'] as bool;
-
-                return Align(
-                  alignment: isUser
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.75,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isUser ? AppColors.primary : AppColors.surface,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      msg['texto'],
-                      style: TextStyle(
-                        color: isUser ? Colors.white : AppColors.accent,
-                      ),
-                    ),
-                  ),
+                return BolhaChat(
+                  texto: msg['texto'],
+                  isUser: msg['isUser'],
                 );
               },
             ),

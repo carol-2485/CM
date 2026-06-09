@@ -10,13 +10,13 @@ import '../../../constants/app_colors.dart';
 class PerguntaSimNao extends StatelessWidget {
   final String pergunta;
   final bool? valor;
-  final void Function(bool) aoMudar;
+  final void Function(bool) onChanged;
 
   const PerguntaSimNao({
     super.key,
     required this.pergunta,
     required this.valor,
-    required this.aoMudar,
+    required this.onChanged,
   });
 
   @override
@@ -43,7 +43,7 @@ class PerguntaSimNao extends StatelessWidget {
                 groupValue: valor,
                 fillColor: WidgetStateProperty.all(AppColors.primary),
                 // ignore: deprecated_member_use
-                onChanged: (v) => aoMudar(v!),
+                onChanged: (v) => onChanged(v!),
               ),
               const Text('Sim', style: TextStyle(fontSize: 13)),
               const SizedBox(width: 24),
@@ -53,7 +53,7 @@ class PerguntaSimNao extends StatelessWidget {
                 groupValue: valor,
                 fillColor: WidgetStateProperty.all(AppColors.primary),
                 // ignore: deprecated_member_use
-                onChanged: (v) => aoMudar(v!),
+                onChanged: (v) => onChanged(v!),
               ),
               const Text('Não', style: TextStyle(fontSize: 13)),
             ],
