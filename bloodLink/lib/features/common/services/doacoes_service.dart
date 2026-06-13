@@ -32,18 +32,35 @@ class DoacoesService {
         }
       }
 
-      if (novasDoacoes > 0) {
-        final docUtilizador = await _baseDados.collection('users').doc(uid).get();
-        final totalActual = (docUtilizador.data()?['totalDoacoes'] ?? 0) as int;
-        await _baseDados.collection('users').doc(uid).update({
-          'totalDoacoes': totalActual + novasDoacoes,
-          'dataUltimaDoacao': chaveUltimaDoacao ?? FieldValue.delete(),
-        });
-      }
-    } catch (erro) {
-      // erro silencioso — sincronização em background, não afecta UX
+      // Recalcula sempre o total real de doações concluídas para evitar inconsistências
+    final todasConcluidas = await _baseDados
+        .collection('vagas')
+        .where('userId', isEqualTo: uid)
+        .where('estado', isEqualTo: 'concluido')
+        .get();
+
+    final totalReal = todasConcluidas.docs.length;
+
+    // Se não houve novas doações, determina a chave da doação mais recente
+    if (chaveUltimaDoacao == null && todasConcluidas.docs.isNotEmpty) {
+      final chaves = todasConcluidas.docs
+          .map((d) => d.data()['dataKey'] as String? ?? '')
+          .where((c) => c.isNotEmpty)
+          .toList()
+        ..sort();
+      chaveUltimaDoacao = chaves.last;
     }
+
+    // Actualiza o documento do utilizador com o total real e a data da última doação
+    await _baseDados.collection('users').doc(uid).update({
+      'totalDoacoes': totalReal,
+      if (chaveUltimaDoacao != null) 'dataUltimaDoacao': chaveUltimaDoacao,
+    });
+
+  } catch (erro) {
+    // Erro silencioso — sincronização em background, não afecta a experiência do utilizador
   }
+}
 
   static Future<List<Map<String, dynamic>>> obterDoacoesConcluidas() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
